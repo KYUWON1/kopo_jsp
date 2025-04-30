@@ -1,14 +1,20 @@
 package com.kopo.web_final.member.dao;
 
+import com.kopo.web_final.exception.MemberException;
 import com.kopo.web_final.member.model.Member;
+import com.kopo.web_final.type.ErrorType;
+import com.kopo.web_final.type.UserStatus;
+import com.kopo.web_final.type.UserType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MemberDao {
+public class MemberDao{
 
     private Connection conn;
 
@@ -16,8 +22,8 @@ public class MemberDao {
         this.conn = conn;
     }
 
-    public int insertMember(Member member) {
-        String sql = "INSERT INTO tb_user (id_user, nm_user, nm_paswd, nm_enc_paswd, nm_mobile, nm_email, st_status, cd_user_type, no_register, da_first_date)"
+    public int insertMember(Member member) throws MemberException {
+        String sql = "INSERT INTO tb_user (id_user, nm_user, nm_paswd, nm_enc_paswd, no_mobile, nm_email, st_status, cd_user_type, no_register, da_first_date)"
                 +" VALUES (" +
                 " 'U_' || LPAD(seq_tb_user_id.NEXTVAL,6,'0'), ?, ?, ?, ?, ?, ?, ?, ?, ?" +
                 ")";
@@ -35,12 +41,35 @@ public class MemberDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
         }
 
     }
 
-    public int checkEmailExist(String email) {
+    public int updateMember(String idUser,Member member) throws MemberException {
+        String sql = "update tb_user " +
+                "set " +
+                "nm_email = ?, " +
+                "nm_user = ?, " +
+                "nm_paswd = ?, " +
+                "no_mobile = ? " +
+                "WHERE id_user = ? ";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1,member.getNmEmail());
+            pstmt.setString(2,member.getNmUser());
+            pstmt.setString(3,member.getNmPaswd());
+            pstmt.setString(4,member.getNoMobile());
+            pstmt.setString(5,idUser);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+
+    }
+
+    public int checkEmailExist(String email) throws MemberException {
         String sql = "select COUNT(*) from tb_user" +
                 " WHERE nm_email = ?";
         
@@ -55,11 +84,11 @@ public class MemberDao {
 
             return 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
         }
     }
 
-    public Member findByEmail(String email) {
+    public Member findByEmail(String email) throws MemberException {
         String sql = "select * FROM tb_user where nm_email = ?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -73,7 +102,7 @@ public class MemberDao {
                         rs.getString("nm_user"),
                         rs.getString("nm_paswd"),
                         rs.getString("nm_enc_paswd"),
-                        rs.getString("nm_mobile"),
+                        rs.getString("no_mobile"),
                         rs.getString("nm_email"),
                         rs.getString("st_status"),
                         rs.getString("cd_user_type"),
@@ -81,11 +110,61 @@ public class MemberDao {
                         fromSqlDate(rs.getDate("da_first_date"))
                 );
             }
-
             return null;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
         }
+    }
+
+    public List<Member> getActiveMemberList(UserStatus status) throws MemberException {
+        String sql = "select * from tb_user where st_status = ?";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1, status.toString());
+
+            ResultSet rs = pstmt.executeQuery();
+            List<Member> memberList = new ArrayList<>();
+            while(rs.next()){
+                memberList.add(Member.buildMember(rs));
+            }
+            return memberList;
+        }catch(SQLException e){
+            e.printStackTrace();
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public int updateStatus(String idUser, UserStatus userStatus) throws MemberException {
+        String sql = "UPDATE tb_user " +
+                " SET st_status = ? " +
+                " WHERE id_user = ? ";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1,userStatus.toString());
+            pstmt.setString(2,idUser);
+
+            return pstmt.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public Member findById(String id) throws MemberException {
+        String query = "SELECT * FROM tb_member WHERE id_user = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Member.buildMember(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+
+        return null;
     }
 
     private java.sql.Date toSqlDate(LocalDate localDate) {
@@ -95,4 +174,6 @@ public class MemberDao {
     private LocalDate fromSqlDate(java.sql.Date sqlDate) {
         return sqlDate != null ? sqlDate.toLocalDate() : null;
     }
+
+
 }
