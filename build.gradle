@@ -24,9 +24,6 @@ tasks.withType(JavaCompile) {
 dependencies {
     compileOnly('jakarta.servlet:jakarta.servlet-api:6.1.0')
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'  // 최신 버전 확인
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }

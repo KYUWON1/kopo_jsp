@@ -51,6 +51,7 @@ public class JoinController extends HttpServlet {
             req.setAttribute("userName", req.getParameter("userName"));
             req.getRequestDispatcher("/member/signup_success.jsp").forward(req, res);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
