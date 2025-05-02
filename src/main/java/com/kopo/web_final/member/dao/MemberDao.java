@@ -51,16 +51,33 @@ public class MemberDao{
                 "set " +
                 "nm_email = ?, " +
                 "nm_user = ?, " +
-                "nm_paswd = ?, " +
                 "no_mobile = ? " +
                 "WHERE id_user = ? ";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1,member.getNmEmail());
             pstmt.setString(2,member.getNmUser());
-            pstmt.setString(3,member.getNmPaswd());
-            pstmt.setString(4,member.getNoMobile());
-            pstmt.setString(5,idUser);
+            pstmt.setString(3,member.getNoMobile());
+            pstmt.setString(4,idUser);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+
+    }
+
+    public int updateMemberPassword(String idUser,Member member) throws MemberException {
+        String sql = "update tb_user " +
+                "set " +
+                "nm_paswd = ?, " +
+                "nm_enc_paswd = ? " +
+                "WHERE id_user = ? ";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1,member.getNmPaswd());
+            pstmt.setString(2,member.getNmEncPaswd());
+            pstmt.setString(3,idUser);
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -134,6 +151,23 @@ public class MemberDao{
         }
     }
 
+    public int updateStatusInit(String adminId, String idUser, UserStatus userStatus) throws MemberException {
+        String sql = "UPDATE tb_user " +
+                " SET st_status = ?, no_register = ?, da_first_date = ?  " +
+                " WHERE id_user = ? ";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1,userStatus.toString());
+            pstmt.setString(2,adminId);
+            pstmt.setDate(3, toSqlDate(LocalDate.now()));
+            pstmt.setString(4,idUser);
+
+            return pstmt.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
     public int updateStatus(String idUser, UserStatus userStatus) throws MemberException {
         String sql = "UPDATE tb_user " +
                 " SET st_status = ? " +
@@ -149,8 +183,26 @@ public class MemberDao{
         }
     }
 
+    public int updateMemberAuth(String targetId, Member member) throws MemberException {
+        String sql = "UPDATE tb_user " +
+                " SET st_status = ?, cd_user_type = ? " +
+                " WHERE id_user = ? ";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1,member.getStStatus());
+            pstmt.setString(2,member.getCdUserType());
+            pstmt.setString(3,targetId);
+
+            return pstmt.executeUpdate();
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
     public Member findById(String id) throws MemberException {
-        String query = "SELECT * FROM tb_member WHERE id_user = ?";
+        String query = "SELECT * FROM tb_user WHERE id_user = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, id);
@@ -174,6 +226,5 @@ public class MemberDao{
     private LocalDate fromSqlDate(java.sql.Date sqlDate) {
         return sqlDate != null ? sqlDate.toLocalDate() : null;
     }
-
 
 }

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serial;
+import java.net.URLEncoder;
 import java.sql.Connection;
 
 @WebServlet(name = "UpdateController", value = "/member/update")
@@ -31,6 +32,10 @@ public class UpdateController extends HttpServlet {
             String idUser = req.getParameter("idUser");
             String email = req.getParameter("email");
             String bfEmail = req.getParameter("bfEmail");
+            String username = req.getParameter("username");
+            String phoneNumber = req.getParameter("phoneNumber");
+
+
 
             // 이메일이 변경되었을 때만 중복 검증 수행
             if (!email.equals(bfEmail) && dao.checkEmailExist(email) > 0) {
@@ -46,28 +51,24 @@ public class UpdateController extends HttpServlet {
             // 값 업데이트
             loginUser.setNmEmail(email);
             loginUser.setNmUser(req.getParameter("username")); // 이름
-            String newPassword = req.getParameter("password");
-            if (newPassword != null && !newPassword.trim().isEmpty()) {
-                loginUser.setNmPaswd(newPassword); // 새 비밀번호 입력한 경우만 반영
-            }
             loginUser.setNoMobile(req.getParameter("phoneNumber"));
 
             int result = dao.updateMember(idUser, loginUser);
 
-            if (result != 1) {
-                System.out.println("회원 정보 수정 실패.");
-                req.setAttribute("error", ErrorType.UPDATE_FAIL.getMessage());
-                req.getRequestDispatcher("/member/info.jsp").forward(req, res);
-                return;
+            if (result > 0) {
+                // 세션의 유저 정보도 업데이트
+                loginUser.setNmEmail(email);
+                loginUser.setNmUser(username);
+                loginUser.setNoMobile(phoneNumber);
+                session.setAttribute("loginUser", loginUser);
+
+                String encodedMessage = URLEncoder.encode("회원 정보가 성공적으로 수정되었습니다.", "UTF-8");
+                res.sendRedirect("/member/info.jsp?message=" + encodedMessage);
+            } else {
+                String encodedError = URLEncoder.encode("회원 정보 수정에 실패했습니다.", "UTF-8");
+                req.setAttribute("error",ErrorType.INTERNAL_ERROR.getMessage());
+                res.sendRedirect("/member/info.jsp");
             }
-
-            // 세션 업데이트
-            session.setAttribute("loginUser", loginUser);
-
-            // 성공 후 다시 정보 페이지로 이동
-            req.setAttribute("success", true); // 성공 표시
-            req.getRequestDispatcher("/member/info.jsp").forward(req, res);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

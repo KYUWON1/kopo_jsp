@@ -62,6 +62,10 @@ public class MemberListController extends HttpServlet {
             List<Member> memberList = dao.getActiveMemberList(uStatus);
             req.setAttribute("memberList", memberList);
 
+            for(Member member : memberList){
+                System.out.println(member.getIdUser());
+            }
+
             // 페이지 포워딩
             switch (status) {
                 case "active":

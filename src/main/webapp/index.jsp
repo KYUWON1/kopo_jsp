@@ -54,7 +54,16 @@
             color: white;
             text-decoration: none;
         }
-        
+
+        .logo span {
+            font-size: 14px;
+            background-color: #1b5e20;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
         /* 네비게이션 스타일 */
         .navbar {
             display: flex;
@@ -242,6 +251,14 @@
     <div class="header-container">
         <div class="logo">
             <a href="/">심플리원</a>
+            <%
+                System.out.println(userType);
+                if (loginUser != null && userType.equals("_20")) {
+            %>
+                <span>관리자</span>
+            <%
+                }
+            %>
         </div>
         <div class="navbar">
             <% if (loginUser == null) { %>
@@ -252,12 +269,10 @@
             <a href="admin/member-list?status=apply">가입 승인</a>
             <a href="admin/member-list?status=withdraw">탈퇴 승인</a>
             <a href="member/logout.jsp">로그아웃</a>
-            <span class="welcome-msg">관리자: <%= loginUser.getNmUser() %> 님</span>
             <% } else { %>
-            <a href="/member/info.jsp">개인정보</a>
+            <a href="/member/info_auth.jsp">개인정보</a>
             <a href="/member/leave.jsp">회원탈퇴</a>
             <a href="/member/logout.jsp">로그아웃</a>
-            <span class="welcome-msg"><%= loginUser.getNmUser() %> 님 환영합니다</span>
             <% } %>
         </div>
     </div>

@@ -1,4 +1,4 @@
-package com.kopo.web_final.admin.controller;
+package com.kopo.web_final.member.controller;
 
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
@@ -48,7 +48,12 @@ public class AdminUpdateController extends HttpServlet {
         // 변경할 상태와 역할 정보 가져오기
         String newStatus = req.getParameter("status_" + targetId);
         String newRole = req.getParameter("role_" + targetId);
-        
+
+        System.out.println("targetId: " + targetId);
+        System.out.println("newStatus: " + newStatus);
+        System.out.println("newRole: " + newRole);
+
+
         if (newStatus == null || newRole == null) {
             message = "변경할 회원 상태 또는 권한 정보가 올바르지 않습니다.";
             res.sendRedirect("/admin/member-list?status=active&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
@@ -66,26 +71,18 @@ public class AdminUpdateController extends HttpServlet {
                 res.sendRedirect("/admin/member-list?status=active&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
                 return;
             }
-            
-            // 정보 업데이트
-            Member updatedMember = new Member();
-            updatedMember.setIdUser(targetId);
-            
+
             // 상태 업데이트 (ST01: 활성, ST03: 정지)
-            updatedMember.setStStatus(newStatus);
+            member.setStStatus(newStatus);
             
             // 권한 업데이트 (_10: 사용자, _20: 관리자)
-            updatedMember.setCdUserType(newRole);
-            
-            // 기존 정보 유지
-            updatedMember.setNmUser(member.getNmUser());
-            updatedMember.setNmEmail(member.getNmEmail());
-            updatedMember.setNoMobile(member.getNoMobile());
-            updatedMember.setNmEncPaswd(member.getNmEncPaswd());
-            updatedMember.setDaFirstDate(member.getDaFirstDate());
+            member.setCdUserType(newRole);
+
+            System.out.println(member.getStStatus());
+            System.out.println(member.getCdUserType());
             
             // 회원 정보 업데이트
-            int result = dao.updateMember(targetId, updatedMember);
+            int result = dao.updateMemberAuth(targetId, member);
             
             if (result > 0) {
                 message = member.getNmUser() + " 회원의 정보가 성공적으로 변경되었습니다.";

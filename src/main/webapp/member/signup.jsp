@@ -1,7 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    String error = (String) request.getAttribute("error");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,7 +52,7 @@
         /* 회원가입 폼 스타일 */
         .signup-container {
             width: 500px;
-            margin: 50px auto;
+            margin: 40px auto;
             background: white;
             padding: 35px 30px;
             border-radius: 10px;
@@ -71,32 +68,15 @@
             font-weight: 600;
         }
         
-        .error {
-            color: #e53935;
-            background-color: #ffebee;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 14px;
-        }
-        
-        .form-row {
-            display: flex;
+        .form-group {
             margin-bottom: 20px;
         }
         
-        .form-label {
-            flex: 1;
-            padding: 12px 10px 12px 0;
-            text-align: right;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 500;
             color: #555;
-        }
-        
-        .form-input-container {
-            flex: 2;
-            padding-left: 10px;
         }
         
         .form-input {
@@ -105,7 +85,7 @@
             border: 1px solid #c8e6c9;
             border-radius: 6px;
             font-size: 15px;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         
         .form-input:focus {
@@ -114,10 +94,13 @@
             box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
         }
         
-        .hint {
-            font-size: 12px;
-            color: #757575;
-            margin-top: 5px;
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-col {
+            flex: 1;
         }
         
         .btn-signup {
@@ -152,6 +135,23 @@
         
         .links a:hover {
             text-decoration: underline;
+        }
+        
+        /* 비밀번호 확인 피드백 스타일 */
+        .password-feedback {
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .valid-feedback {
+            color: #4caf50;
+            display: block;
+        }
+        
+        .invalid-feedback {
+            color: #f44336;
+            display: block;
         }
         
         /* 푸터 스타일 */
@@ -190,49 +190,37 @@
 <div class="signup-container">
     <h2>회원가입</h2>
     
-    <% if (error != null && !error.isEmpty()) { %>
-    <div class="error"><%= error %></div>
-    <% } %>
-    
-    <form action="/member/join" method="post">
-        <div class="form-row">
-            <div class="form-label">이메일</div>
-            <div class="form-input-container">
-                <input type="email" name="email" class="form-input" 
-                       pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" 
-                       required>
-                <div class="hint">이메일 주소를 입력하세요</div>
-            </div>
+    <form action="/member/join" method="post" id="signupForm">
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" class="form-input" required>
         </div>
         
-        <div class="form-row">
-            <div class="form-label">이름</div>
-            <div class="form-input-container">
-                <input type="text" name="userName" class="form-input" required>
-            </div>
+        <div class="form-group">
+            <label for="username">이름</label>
+            <input type="text" id="username" name="username" class="form-input" required>
         </div>
         
-        <div class="form-row">
-            <div class="form-label">비밀번호</div>
-            <div class="form-input-container">
-                <input type="password" name="password" class="form-input" 
-                       pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{5,15}" 
-                       required>
-                <div class="hint">대소문자와 숫자를 포함한 5~15자</div>
-            </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" class="form-input" 
+                   required minlength="4" onkeyup="checkPasswordMatch()">
         </div>
         
-        <div class="form-row">
-            <div class="form-label">휴대전화</div>
-            <div class="form-input-container">
-                <input type="text" name="phoneNumber" class="form-input" 
-                       pattern="\d{10,11}" 
-                       required>
-                <div class="hint">10~11자리 숫자만 입력</div>
-            </div>
+        <div class="form-group">
+            <label for="confirmPassword">비밀번호 확인</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" 
+                   required minlength="4" onkeyup="checkPasswordMatch()">
+            <div id="passwordFeedback" class="password-feedback">비밀번호를 입력해주세요.</div>
         </div>
         
-        <button type="submit" class="btn-signup">회원가입</button>
+        <div class="form-group">
+            <label for="phoneNumber">휴대전화</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" class="form-input" 
+                   placeholder="예: 010-1234-5678" required>
+        </div>
+        
+        <button type="submit" class="btn-signup" id="submitBtn">가입하기</button>
         
         <div class="links">
             <a href="/member/login.jsp">로그인</a>
@@ -247,6 +235,61 @@
         <p class="footer-text">&copy; 2023 심플리원 쇼핑몰 All Rights Reserved.</p>
     </div>
 </footer>
+
+<script>
+    // 비밀번호 일치 여부 확인 함수
+    function checkPasswordMatch() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+        var feedback = document.getElementById("passwordFeedback");
+        var submitBtn = document.getElementById("submitBtn");
+        
+        // 피드백 요소 표시
+        feedback.style.display = "block";
+        
+        // 비밀번호 확인 필드가 비어있으면 메시지 숨김
+        if (confirmPassword === "") {
+            feedback.textContent = "비밀번호를 입력해주세요.";
+            feedback.className = "password-feedback";
+            return;
+        }
+        
+        // 비밀번호 일치 여부 확인
+        if (password === confirmPassword) {
+            feedback.textContent = "비밀번호가 일치합니다.";
+            feedback.className = "password-feedback valid-feedback";
+            submitBtn.disabled = false;
+        } else {
+            feedback.textContent = "비밀번호가 일치하지 않습니다.";
+            feedback.className = "password-feedback invalid-feedback";
+            submitBtn.disabled = true;
+        }
+    }
+    
+    // 폼 제출 전 유효성 검사
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+        
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+        }
+    });
+    
+    // 페이지 로드 시 비밀번호 확인 상태 초기화
+    window.onload = function() {
+        var feedback = document.getElementById("passwordFeedback");
+        feedback.style.display = "none";
+        
+        // 비밀번호 입력 필드에 포커스 이벤트 추가
+        document.getElementById("confirmPassword").addEventListener("focus", function() {
+            if (feedback.style.display === "none") {
+                feedback.style.display = "block";
+            }
+        });
+    };
+</script>
 
 </body>
 </html>

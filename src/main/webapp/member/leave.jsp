@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.member.model.Member" %>
+<%@ page import="com.kopo.web_final.type.ErrorType" %>
 <%
     Member loginUser = (Member) session.getAttribute("loginUser");
     if (loginUser == null) {
@@ -86,6 +87,17 @@
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border: 1px solid #e0e0e0;
+        }
+
+        .error {
+            color: #e53935;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
         }
 
         h2 {
@@ -267,12 +279,15 @@
             <a href="/">심플리원</a>
         </div>
         <div class="navbar">
-            <a href="/">홈으로</a>
-            <a href="/member/info.jsp">개인정보</a>
+            <a href="/member/info_auth.jsp">개인정보</a>
+            <a href="/member/leave.jsp">회원탈퇴</a>
             <a href="/member/logout.jsp">로그아웃</a>
         </div>
     </div>
 </header>
+<%
+    String error = request.getParameter("error");
+%>
 
 <!-- 회원 탈퇴 폼 -->
 <div class="leave-container">
@@ -287,12 +302,12 @@
         </div>
     </div>
 
-    <form method="post" action="/member/withdraw" onsubmit="return validateForm()">
+    <form method="post" action="/member/leave" onsubmit="return validateForm()">
         <input type="hidden" name="idUser" value="<%= loginUser.getIdUser() %>">
-
+        <input type="hidden" name="password" value="<%= loginUser.getNmPaswd() %>">
         <div class="form-group">
             <label for="password">비밀번호 확인</label>
-            <input type="password" id="password" name="password" class="form-input"
+            <input type="password" id="password" name="passwordCheck" class="form-input"
                    placeholder="본인 확인을 위해 비밀번호를 입력해주세요">
         </div>
 
@@ -307,9 +322,13 @@
             <button type="button" class="btn-cancel" onclick="location.href='/'">취소</button>
             <button type="submit" class="btn-leave">탈퇴하기</button>
         </div>
-
+        <% if (error != null && !error.isEmpty()) {
+            String msg = ErrorType.valueOf(error).getMessage();
+        %>
+            <div class="error"><%= msg %></div>
+        <% } %>
         <div class="info-message">
-            <a href="/member/info.jsp">개인정보 관리로 돌아가기</a>
+            <a href="/member/info_auth.jsp">개인정보 관리로 돌아가기</a>
         </div>
     </form>
 </div>

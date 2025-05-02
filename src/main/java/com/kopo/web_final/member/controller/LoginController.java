@@ -4,6 +4,7 @@ import com.kopo.web_final.exception.MemberException;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.type.ErrorType;
+import com.kopo.web_final.type.UserStatus;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,11 +29,17 @@ public class LoginController extends HttpServlet {
         try(Connection conn = Db.getConnection()) {
             MemberDao dao = new MemberDao(conn);
 
-
             Member member = dao.findByEmail(req.getParameter("email"));
-            // 계정 존재 X
+
+            // 계정 존재 X or 활성화 상태 확인
             if(member == null){
                 System.out.println("해당 이메일은 존재하지않습니다.");
+                req.setAttribute("error", ErrorType.USER_NOT_FOUND.getMessage());
+                req.getRequestDispatcher("/member/login.jsp").forward(req, res);
+                return;
+            }
+            if(!member.getStStatus().equals(UserStatus.ST01.toString())){
+                System.out.println("사용 정지된 계정");
                 req.setAttribute("error", ErrorType.USER_NOT_FOUND.getMessage());
                 req.getRequestDispatcher("/member/login.jsp").forward(req, res);
                 return;
@@ -46,6 +53,8 @@ public class LoginController extends HttpServlet {
             }
 
             HttpSession session = req.getSession();
+            member.setNmPaswd(null);
+            member.setNmEncPaswd(null);
             session.setAttribute("loginUser",member);
             req.setAttribute("userName",member.getNmUser());
             req.getRequestDispatcher("/member/login_success.jsp").forward(req,res);

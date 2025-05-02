@@ -11,17 +11,29 @@
     }
 
     // 가입 신청 회원 목록 조회는 서블릿에서 처리한다고 가정
-    List<Member> applyMembers = (List<Member>) request.getAttribute("applyMembers");
+    List<Member> applyMembers = (List<Member>) request.getAttribute("memberList");
 
     // 승인/거절 결과 메시지
     String message = (String) request.getAttribute("message");
+    
+    // 현재 상태(가입 신청 or 탈퇴 신청)
+    String status = request.getParameter("status");
+    boolean isWithdraw = "withdraw".equals(status);
+    
+    // 페이지 타이틀 및 버튼 텍스트 설정
+    String pageTitle = isWithdraw ? "회원 탈퇴 신청 관리" : "회원 가입 신청 관리";
+    String cardTitle = isWithdraw ? "탈퇴 대기 회원 목록" : "가입 대기 회원 목록";
+    String statusBadgeText = isWithdraw ? "탈퇴대기" : "승인대기";
+    String buttonText = isWithdraw ? "탈퇴 승인" : "가입 승인";
+    String buttonClass = isWithdraw ? "btn-reject" : "btn-approve";
+    String actionValue = isWithdraw ? "withdraw" : "approve";
 %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원 가입 승인 - 심플리원 관리자</title>
+    <title><%= pageTitle %> - 심플리원 관리자</title>
     <style>
         * {
             margin: 0;
@@ -202,6 +214,11 @@
             background-color: #fff8e1;
             color: #ff8f00;
         }
+        
+        .status-withdraw {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
 
         .btn-group {
             display: flex;
@@ -272,21 +289,6 @@
             opacity: 0.8;
         }
     </style>
-    <script>
-        function confirmApprove(idUser) {
-            if (confirm("해당 회원의 가입을 승인하시겠습니까?")) {
-                document.getElementById("action-" + idUser).value = "approve";
-                document.getElementById("form-" + idUser).submit();
-            }
-        }
-
-        function confirmReject(idUser) {
-            if (confirm("해당 회원의 가입을 거절하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
-                document.getElementById("action-" + idUser).value = "reject";
-                document.getElementById("form-" + idUser).submit();
-            }
-        }
-    </script>
 </head>
 <body>
 
@@ -308,7 +310,7 @@
 
 <!-- 메인 컨텐츠 영역 -->
 <div class="content-container">
-    <h1 class="page-title">회원 가입 신청 관리</h1>
+    <h1 class="page-title"><%= pageTitle %></h1>
 
     <% if (message != null) { %>
     <div class="alert <%= message.contains("오류") ? "alert-danger" : "alert-success" %>">
@@ -318,7 +320,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">가입 대기 회원 목록</h2>
+            <h2 class="card-title"><%= cardTitle %></h2>
         </div>
         <div class="card-body">
             <% if (applyMembers != null && !applyMembers.isEmpty()) { %>
@@ -342,15 +344,19 @@
                         <td><%= member.getNmUser() %></td>
                         <td><%= member.getNmEmail() %></td>
                         <td><%= member.getNoMobile() %></td>
-                        <td><%= member.getDaFirstDate() %></td>
-                        <td><span class="status-badge status-pending">승인대기</span></td>
+                        <td><%= member.getDaFirstDate() == null ? "미등록" : member.getDaFirstDate() %></td>
+                        <td>
+                            <span class="status-badge <%= isWithdraw ? "status-withdraw" : "status-pending" %>">
+                                <%= statusBadgeText %>
+                            </span>
+                        </td>
                         <td>
                             <div class="btn-group">
-                                <form id="form-<%= member.getIdUser() %>" action="/admin/member-approval" method="post" style="display:inline;">
-                                    <input type="hidden" name="idUser" value="<%= member.getIdUser() %>">
-                                    <input type="hidden" id="action-<%= member.getIdUser() %>" name="action" value="">
-                                    <button type="button" class="btn btn-approve" onclick="confirmApprove('<%= member.getIdUser() %>')">승인</button>
-                                    <button type="button" class="btn btn-reject" onclick="confirmReject('<%= member.getIdUser() %>')">거절</button>
+                                <!-- 단일 승인 버튼 -->
+                                <form action="/admin/member-approval" method="POST" style="display:inline;">
+                                    <input type="hidden" name="idUser" value="<%= member.getIdUser() %>" />
+                                    <input type="hidden" name="action" value="<%= actionValue %>" />
+                                    <button type="submit" class="btn <%= buttonClass %>"><%= buttonText %></button>
                                 </form>
                             </div>
                         </td>
@@ -362,7 +368,7 @@
             <% } else { %>
             <div class="empty-state">
                 <div class="empty-icon">📭</div>
-                <p class="empty-text">현재 승인 대기 중인 회원이 없습니다.</p>
+                <p class="empty-text">현재 <%= isWithdraw ? "탈퇴" : "승인" %> 대기 중인 회원이 없습니다.</p>
             </div>
             <% } %>
         </div>

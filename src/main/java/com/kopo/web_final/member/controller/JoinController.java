@@ -37,7 +37,7 @@ public class JoinController extends HttpServlet {
 
             int result = dao.insertMember(Member.buildMember(
                     req.getParameter("email"),
-                    req.getParameter("userName"),
+                    req.getParameter("username"),
                     req.getParameter("password"),
                     req.getParameter("phoneNumber")
             ));

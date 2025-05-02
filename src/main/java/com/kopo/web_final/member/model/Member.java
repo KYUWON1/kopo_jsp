@@ -27,13 +27,15 @@ public class Member {
         Member member = new Member();
         member.setNmUser(nmUser);
         member.setNmPaswd(nmPaswd);
+        // 추후에 암호화 예정
+        member.setNmEncPaswd(nmPaswd);
         member.setNoMobile(noMobile);
         member.setNmEmail(nmEmail);
 
         member.setStStatus(UserStatus.ST00.toString());
         member.setCdUserType(UserType._10.toString());
 
-        member.setDaFirstDate(LocalDate.now());
+        member.setDaFirstDate(null);
 
         return member;
     }

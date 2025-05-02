@@ -8,7 +8,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
   Member loginMember = (Member) session.getAttribute("loginUser");
-  String name = loginMember.getNmUser();
+  String name = "사용자";
+  if(loginMember != null){
+    name = loginMember.getNmUser();
+  }
   session.invalidate();
 %>
 <html>
