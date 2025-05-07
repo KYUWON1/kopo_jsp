@@ -114,18 +114,7 @@ public class MemberDao{
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()){
-                return new Member(
-                    rs.getString("id_user"),
-                        rs.getString("nm_user"),
-                        rs.getString("nm_paswd"),
-                        rs.getString("nm_enc_paswd"),
-                        rs.getString("no_mobile"),
-                        rs.getString("nm_email"),
-                        rs.getString("st_status"),
-                        rs.getString("cd_user_type"),
-                        rs.getString("no_register"),
-                        fromSqlDate(rs.getDate("da_first_date"))
-                );
+                return Member.buildMember(rs);
             }
             return null;
         } catch (SQLException e) {
@@ -223,8 +212,5 @@ public class MemberDao{
         return localDate != null ? java.sql.Date.valueOf(localDate) : null;
     }
 
-    private LocalDate fromSqlDate(java.sql.Date sqlDate) {
-        return sqlDate != null ? sqlDate.toLocalDate() : null;
-    }
 
 }

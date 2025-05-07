@@ -292,21 +292,7 @@
 </head>
 <body>
 
-<!-- 헤더 영역 -->
-<header>
-    <div class="header-container">
-        <div class="logo">
-            <a href="/">심플리원</a>
-            <span>관리자</span>
-        </div>
-        <div class="navbar">
-            <a href="/admin/member-list?status=active">회원 관리</a>
-            <a href="/admin/member-list?status=apply">가입 승인</a>
-            <a href="/admin/member-list?status=withdraw">탈퇴 승인</a>
-            <a href="/member/logout.jsp">로그아웃</a>
-        </div>
-    </div>
-</header>
+<%@ include file="/common/header.jsp" %>
 
 <!-- 메인 컨텐츠 영역 -->
 <div class="content-container">
@@ -375,12 +361,4 @@
     </div>
 </div>
 
-<!-- 푸터 영역 -->
-<footer>
-    <div class="footer-container">
-        <p class="footer-text">&copy; 2023 심플리원 쇼핑몰 - 관리자 시스템</p>
-    </div>
-</footer>
-
-</body>
-</html>
+<%@ include file="/common/simple_footer.jsp" %>

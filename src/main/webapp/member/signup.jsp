@@ -177,14 +177,7 @@
 </head>
 <body>
 
-<!-- 헤더 영역 -->
-<header>
-    <div class="header-container">
-        <div class="logo">
-            <a href="/">심플리원</a>
-        </div>
-    </div>
-</header>
+<%@ include file="/common/header.jsp" %>
 
 <!-- 회원가입 폼 -->
 <div class="signup-container">
@@ -228,13 +221,6 @@
         </div>
     </form>
 </div>
-
-<!-- 푸터 영역 -->
-<footer>
-    <div class="footer-container">
-        <p class="footer-text">&copy; 2023 심플리원 쇼핑몰 All Rights Reserved.</p>
-    </div>
-</footer>
 
 <script>
     // 비밀번호 일치 여부 확인 함수
@@ -291,5 +277,4 @@
     };
 </script>
 
-</body>
-</html>
+<%@ include file="/common/simple_footer.jsp" %>

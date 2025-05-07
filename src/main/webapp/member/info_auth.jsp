@@ -191,18 +191,7 @@
 </head>
 <body>
 
-<!-- 헤더 영역 -->
-<header>
-  <div class="header-container">
-    <div class="logo">
-      <a href="/">심플리원</a>
-    </div>
-    <div class="navbar">
-      <a href="/">홈으로</a>
-      <a href="/member/logout.jsp">로그아웃</a>
-    </div>
-  </div>
-</header>
+<%@ include file="/common/header.jsp" %>
 
 <!-- 본인 확인 폼 -->
 <div class="auth-container">
@@ -228,12 +217,4 @@
   </form>
 </div>
 
-<!-- 푸터 영역 -->
-<footer>
-  <div class="footer-container">
-    <p class="footer-text">&copy; 2023 심플리원 쇼핑몰 All Rights Reserved.</p>
-  </div>
-</footer>
-
-</body>
-</html>
+<%@ include file="/common/simple_footer.jsp" %>
