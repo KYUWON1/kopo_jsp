@@ -689,4 +689,4 @@ function closeModal() {
     <input type="hidden" id="statusActive" name="ynUse">
 </form>
 
-<%@ include file="/common/footer.jsp" %>
+<%@ include file="/common/simple_footer.jsp" %>

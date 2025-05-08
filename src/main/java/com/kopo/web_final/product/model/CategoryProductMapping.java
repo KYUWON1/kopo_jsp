@@ -1,18 +1,18 @@
-package com.kopo.web_final.category.model;
+package com.kopo.web_final.product.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class CategoryProductMapping {
     private int nbCategory;
     private String noProduct;
     private int cnOrder;
     private String noRegister;
-    private Date daFirstDate;
+    private LocalDate  daFirstDate;
 
     public CategoryProductMapping() {
     }
 
-    public CategoryProductMapping(int nbCategory, String noProduct, int cnOrder, String noRegister, Date daFirstDate) {
+    public CategoryProductMapping(int nbCategory, String noProduct, int cnOrder, String noRegister, LocalDate  daFirstDate) {
         this.nbCategory = nbCategory;
         this.noProduct = noProduct;
         this.cnOrder = cnOrder;
@@ -52,11 +52,11 @@ public class CategoryProductMapping {
         this.noRegister = noRegister;
     }
 
-    public Date getDaFirstDate() {
+    public LocalDate  getDaFirstDate() {
         return daFirstDate;
     }
 
-    public void setDaFirstDate(Date daFirstDate) {
+    public void setDaFirstDate(LocalDate  daFirstDate) {
         this.daFirstDate = daFirstDate;
     }
 }

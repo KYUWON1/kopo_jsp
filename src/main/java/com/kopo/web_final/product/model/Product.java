@@ -1,6 +1,8 @@
 package com.kopo.web_final.product.model;
 
-import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class Product {
     private String noProduct;
@@ -14,12 +16,29 @@ public class Product {
     private int qtStock;
     private int qtDeliveryFee;
     private String noRegister;
-    private Date daFirstDate;
+    private LocalDate daFirstDate;
 
     public Product() {
     }
 
-    public Product(String noProduct, String nmProduct, String nmDetailExplain, String idFile, String dtStartDate, String dtEndDate, int qtCustomer, int qtSalePrice, int qtStock, int qtDeliveryFee, String noRegister, Date daFirstDate) {
+    public static Product BuildProduct(ResultSet rs) throws SQLException {
+        Product product = new Product();
+        product.setNoProduct(rs.getString("NO_PRODUCT"));
+        product.setNmProduct(rs.getString("NM_PRODUCT"));
+        product.setNmDetailExplain(rs.getString("NM_DETAIL_EXPLAIN"));
+        product.setIdFile(rs.getString("ID_FILE"));
+        product.setDtStartDate(rs.getString("DT_START_DATE"));
+        product.setDtEndDate(rs.getString("DT_END_DATE"));
+        product.setQtCustomer(rs.getInt("QT_CUSTOMER"));
+        product.setQtSalePrice(rs.getInt("QT_SALE_PRICE"));
+        product.setQtStock(rs.getInt("QT_STOCK"));
+        product.setQtDeliveryFee(rs.getInt("QT_DELIVERY_FEE"));
+        product.setNoRegister(rs.getString("NO_REGISTER"));
+        product.setDaFirstDate(fromSqlDate(rs.getDate("DA_FIRST_DATE")));
+        return product;
+    }
+
+    public Product(String noProduct, String nmProduct, String nmDetailExplain, String idFile, String dtStartDate, String dtEndDate, int qtCustomer, int qtSalePrice, int qtStock, int qtDeliveryFee, String noRegister, LocalDate daFirstDate) {
         this.noProduct = noProduct;
         this.nmProduct = nmProduct;
         this.nmDetailExplain = nmDetailExplain;
@@ -122,11 +141,15 @@ public class Product {
         this.noRegister = noRegister;
     }
 
-    public Date getDaFirstDate() {
+    public LocalDate getDaFirstDate() {
         return daFirstDate;
     }
 
-    public void setDaFirstDate(Date daFirstDate) {
+    public void setDaFirstDate(LocalDate daFirstDate) {
         this.daFirstDate = daFirstDate;
+    }
+
+    private static LocalDate fromSqlDate(java.sql.Date sqlDate) {
+        return sqlDate != null ? sqlDate.toLocalDate() : null;
     }
 }
