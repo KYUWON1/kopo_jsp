@@ -23,16 +23,16 @@ public class CategoryDeleteController extends HttpServlet {
         try(Connection conn = Db.getConnection()){
             CategoryDao dao = new CategoryDao(conn);
 
-            int result = dao.deleteCategory(req.getParameter("nbCategory"));
+            int result = dao.updateDeleteAndUseStatusFlush(req.getParameter("nbCategory"));
 
-            if(result != 1){
+            if(result < 1){
                 // 실패 메시지와 함께 리다이렉트
-                res.sendRedirect("/admin/category?message=InsertFail&type=error");
+                res.sendRedirect("/admin/category?message=UpdateFail&type=error");
                 return;
             }
             // 성공 메시지와 함께 리다이렉트
             res.sendRedirect("/admin/category?message=" +
-                    URLEncoder.encode("카테고리가 성공적으로 변경되었습니다.", "UTF-8") +
+                    URLEncoder.encode("카테고리가 성공적으로 삭제처리되었습니다.", "UTF-8") +
                     "&type=success");
         } catch (Exception e) {
             throw new RuntimeException(e);

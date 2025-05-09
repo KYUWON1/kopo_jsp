@@ -108,7 +108,39 @@
         padding: 12px 15px;
         border: 1px solid #c8e6c9;
     }
-    
+
+    /* 열 너비 균일화 및 정렬 */
+    th:nth-child(4), td:nth-child(4) {
+        width: 70px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    th:nth-child(6), td:nth-child(6) {
+        width: 100px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    th:nth-child(7), td:nth-child(7) {
+        width: 240px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* 관리 버튼 간 간격 균일화 */
+    .actions button {
+        width: 70px;
+        padding: 6px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* 상태 뱃지도 한 줄 유지 */
+    .status-badge, .delete-badge, .level-badge {
+        white-space: nowrap;
+    }
+
     td {
         padding: 12px 15px;
         border: 1px solid #c8e6c9;
@@ -147,7 +179,6 @@
     .btn-edit {
         background-color: #2196f3;
         color: white;
-        margin-right: 5px;
     }
     
     .btn-edit:hover {
@@ -171,9 +202,10 @@
     .btn-status:hover {
         background-color: #f57c00;
     }
-    
+
     .actions {
         display: flex;
+        height: 75px;
         gap: 5px;
     }
     
@@ -328,6 +360,8 @@
         min-height: 60px; /* 80px에서 60px로 줄임 */
         resize: vertical;
     }
+
+
 
 </style>
 
@@ -550,12 +584,15 @@ function closeModal() {
                             <th>레벨</th>
                             <th>설명</th>
                             <th>상태</th>
-                            <th>관리</th>
+                                <th>관리</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% if (categoryList != null && !categoryList.isEmpty()) {
-                            for (Category category : categoryList) { %>
+                            for (Category category : categoryList) {
+                                if(category.getNbCategory() == 0)
+                                    continue;
+                        %>
                         <tr>
                             <td><%= category.getNbCategory() %></td>
                             <td><%= category.getNmCategory() %></td>
@@ -572,23 +609,27 @@ function closeModal() {
                                 <% } %>
                             </td>
                             <td class="actions">
+                                <% if ("Y".equals(category.getYnDelete())) { %>
+                                <span style="color: #999;">삭제된 항목</span>
+                                <% } else { %>
                                 <button class="btn btn-edit" onclick="openEditModal(
                                     <%= category.getNbCategory() %>,
-                                    <%= category.getNbParentCategory() == null ? "null" : category.getNbParentCategory() %>, 
-                                    '<%= category.getNmCategory() %>', 
-                                    '<%= category.getNmExplain() %>', 
-                                    <%= category.getCnLevel() %>, 
-                                    <%= category.getCnOrder() %>, 
-                                    '<%= category.getYnUse() %>'
-                                )">수정</button>
-                                <button class="btn btn-status" 
+                                    <%= category.getNbParentCategory() == null ? "null" : category.getNbParentCategory() %>,
+                                        '<%= category.getNmCategory() %>',
+                                        '<%= category.getNmExplain() %>',
+                                    <%= category.getCnLevel() %>,
+                                    <%= category.getCnOrder() %>,
+                                        '<%= category.getYnUse() %>'
+                                        )">수정</button>
+                                <button class="btn btn-status"
                                         onclick="toggleStatus(<%= category.getNbCategory() %>, '<%= category.getNmCategory() %>', '<%= category.getYnUse() %>')">
                                     <%= "Y".equals(category.getYnUse()) ? "비활성화" : "활성화" %>
                                 </button>
-                                <button class="btn btn-delete" 
+                                <button class="btn btn-delete"
                                         onclick="confirmDelete(<%= category.getNbCategory() %>, '<%= category.getNmCategory() %>')">
                                     삭제
                                 </button>
+                                <% } %>
                             </td>
                         </tr>
                         <% }
@@ -624,6 +665,8 @@ function closeModal() {
                 <select id="nbParentCategory" name="nbParentCategory" class="form-select" onchange="updateCategoryLevel()">
                     <option value="">없음 (최상위 카테고리)</option>
                     <% for (Category cat : categoryList) {
+                        if(cat.getNbCategory() == 0)
+                            continue;
                         if (cat.getCnLevel() < 3 && "Y".equals(cat.getYnUse()) && !"Y".equals(cat.getYnDelete())) { %>
                     <option value="<%= cat.getNbCategory() %>"><%= cat.getNmFullCategory() %></option>
                     <% } } %>

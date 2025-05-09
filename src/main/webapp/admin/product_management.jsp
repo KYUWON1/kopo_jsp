@@ -346,6 +346,41 @@
         font-weight: bold;
     }
 
+    /* 판매상태, 배송비, 관리 열 줄바꿈 방지 및 너비 조정 */
+    th:nth-child(7), td:nth-child(7),  /* 판매상태 */
+    th:nth-child(9), td:nth-child(9),  /* 배송비 */
+    th:nth-child(10), td:nth-child(10) /* 관리 */
+    {
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* 관리 열 너비 및 버튼 정렬 */
+    th:nth-child(10),
+    td:nth-child(10) {
+        width: 180px; /* 버튼 2개 넉넉히 감쌀 크기 */
+        padding: 0;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        height: 100px;
+        padding: 8px 0;
+        box-sizing: border-box;
+    }
+
+    .actions button {
+        flex: 1;
+        max-width: 70px;
+        padding: 15px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
 </style>
 
 <script>
@@ -420,11 +455,11 @@
         document.getElementById('qtStock').value = qtStock;
         document.getElementById('qtDeliveryFee').value = qtDeliveryFee;
 
-        // 카테고리 설정
+        // 상품 수정 모달 열기 함수 중...
         const categorySelect = document.getElementById('categorySelection');
         const categoryValue = String(categoryId);
 
-        // 해당 categoryId가 셀렉트박스에 존재하는지 확인
+// 해당 categoryId가 select에 존재하는지 확인
         let exists = false;
         for (let i = 0; i < categorySelect.options.length; i++) {
             if (categorySelect.options[i].value === categoryValue) {
@@ -433,8 +468,8 @@
             }
         }
 
-        // 존재하면 선택, 없으면 "카테고리 선택" 선택
-        categorySelect.value = exists ? categoryValue : "";
+// 존재하면 선택, 없으면 "없음" 선택 (value="0")
+        categorySelect.value = exists ? categoryValue : "0";
 
         document.getElementById('productForm').action = '/admin/product-update';
 
@@ -628,7 +663,7 @@
             <div class="form-group">
                 <label for="categorySelection">카테고리</label>
                 <select id="categorySelection" name="nbCategory" class="form-select" onchange="updateOrderFromCategory()" required>
-                    <option value="">카테고리 선택</option>
+                    <option value="">카테고리를 선택해주세요.</option> <!-- 추가된 없음 옵션 -->
                     <% if (categoryList != null && !categoryList.isEmpty()) {
                         for (Category cat : categoryList) {
                             if ("Y".equals(cat.getYnUse()) && !"Y".equals(cat.getYnDelete())) { %>

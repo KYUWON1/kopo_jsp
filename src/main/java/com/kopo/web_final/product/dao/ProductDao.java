@@ -82,10 +82,11 @@ public class ProductDao {
                 "FROM tb_product p\n" +
                 "JOIN tb_category_product_mapping m ON p.no_product = m.no_product\n" +
                 "JOIN (\n" +
-                "    SELECT nb_category,nm_full_category FROM tb_category\n" +
+                "    SELECT nb_category,nm_full_category,cn_order FROM tb_category\n" +
                 "    start with nb_category = ? \n" +
                 "    connect by prior nb_category = nb_parent_category\n" +
-                ")c ON m.nb_category = c.nb_category";
+                ") c ON m.nb_category = c.nb_category" +
+                " ORDER BY c.cn_order, c.nm_full_category";
 
         List<ProductDisplayDto> productDtoList = new ArrayList<>();
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){

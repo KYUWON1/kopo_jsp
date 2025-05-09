@@ -33,13 +33,11 @@ public class ProductDeleteController extends HttpServlet {
             conn.setAutoCommit(false);
             // 매핑 테이블 삭제 => 무결성 제약 조건.  매핑된게 없으면?
             CategoryProductMappingDao cpmDao = new CategoryProductMappingDao(conn);
-            if(!nmCategory.equals("0")){
-                int result1 = cpmDao.deleteCpMapping(noProduct);
-                if(result1 < 1){
-                    res.sendRedirect("/admin/product?message=DeleteFail&type=error");
-                    conn.rollback();
-                    return;
-                }
+            int result1 = cpmDao.deleteCpMapping(noProduct);
+            if(result1 < 1){
+                res.sendRedirect("/admin/product?message=DeleteFail&type=error");
+                conn.rollback();
+                return;
             }
             
             // 상품 삭제

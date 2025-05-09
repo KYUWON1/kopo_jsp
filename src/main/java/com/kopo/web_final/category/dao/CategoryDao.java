@@ -107,7 +107,7 @@ public class CategoryDao {
         }
     }
 
-    public int updateUseStatus(String nbCategory, String ynUse) throws MemberException {
+    public int updateUseStatusActive(String nbCategory, String ynUse) throws MemberException {
         String sql = "UPDATE TB_CATEGORY SET YN_USE = ? WHERE NB_CATEGORY = ?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -120,37 +120,56 @@ public class CategoryDao {
         }
     }
 
-    public int deleteCategory(String nbCategory) throws SQLException, MemberException {
-        String updateChild = "UPDATE TB_CATEGORY " +
-                "SET NB_PARENT_CATEGORY = NULL, YN_USE = 'N' " +
-                "WHERE NB_PARENT_CATEGORY = ?";
-        String updateParent = "UPDATE TB_CATEGORY " +
-                "SET YN_DELETE = 'Y', YN_USE = 'N' " +
-                "WHERE NB_CATEGORY = ?";
+    public int updateUseStatusInActive(String nbCategory, String ynUse) throws MemberException {
+        String sql = "UPDATE TB_CATEGORY set YN_USE = ? \n" +
+                "WHERE NB_CATEGORY = ? OR NB_PARENT_CATEGORY IN (\n" +
+                "    SELECT NB_CATEGORY FROM TB_CATEGORY \n" +
+                "    START WITH NB_CATEGORY = ? \n" +
+                "    CONNECT BY PRIOR NB_CATEGORY = NB_PARENT_CATEGORY\n" +
+                ")";
 
-        conn.setAutoCommit(false);
-        try (
-                PreparedStatement pstmtChild = conn.prepareStatement(updateChild);
-                PreparedStatement pstmtParent = conn.prepareStatement(updateParent)
-        ) {
-            // 1. 자식들 먼저 업데이트
-            pstmtChild.setString(1, nbCategory);
-            pstmtChild.executeUpdate();
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1,ynUse);
+            pstmt.setString(2,nbCategory);
+            pstmt.setString(3,nbCategory);
 
-            // 2. 부모 카테고리 삭제 마킹
-            pstmtParent.setString(1, nbCategory);
-            pstmtParent.executeUpdate();
-
-            conn.commit();
-            return 1;
+            return pstmt.executeUpdate();
         } catch (SQLException e) {
-            conn.rollback();
+            e.printStackTrace();
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public int updateDeleteAndUseStatusFlush(String nbCategory) throws MemberException {
+        String updateSql = "UPDATE TB_CATEGORY\n" +
+                "SET \n" +
+                "    YN_USE = 'N',\n" +
+                "    YN_DELETE = CASE \n" +
+                "        WHEN NB_CATEGORY = ? THEN 'Y' \n" +
+                "        ELSE YN_DELETE \n" +
+                "    END\n" +
+                "WHERE NB_CATEGORY IN (\n" +
+                "    SELECT NB_CATEGORY \n" +
+                "    FROM TB_CATEGORY \n" +
+                "    START WITH NB_CATEGORY = ? \n" +
+                "    CONNECT BY PRIOR NB_CATEGORY = NB_PARENT_CATEGORY\n" +
+                ")";
+
+        int categoryId = Integer.parseInt(nbCategory);
+
+        try (
+                PreparedStatement pstmt = conn.prepareStatement(updateSql);
+        ) {
+            pstmt.setInt(1, categoryId);
+            pstmt.setInt(2, categoryId);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
             throw new MemberException(ErrorType.DB_QUERY_FAIL);
         } catch (Exception e) {
-            conn.rollback();
+            e.printStackTrace();
             throw new RuntimeException("카테고리 삭제 중 예외 발생", e);
-        } finally {
-            conn.setAutoCommit(true);
         }
     }
 

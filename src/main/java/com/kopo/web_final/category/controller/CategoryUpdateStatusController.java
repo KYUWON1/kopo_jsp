@@ -21,12 +21,12 @@ public class CategoryUpdateStatusController extends HttpServlet {
 
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         req.setCharacterEncoding("UTF-8"); // Y
-
+        String ynUse = req.getParameter("ynUse");
         try(Connection conn = Db.getConnection()){
             CategoryDao dao = new CategoryDao(conn);
+            int result;
+            result = dao.updateUseStatusActive(req.getParameter("nbCategory"), ynUse);
 
-            int result = dao.updateUseStatus(req.getParameter("nbCategory"), req.getParameter("ynUse"));
-        
             if(result < 1){
                 // 실패 메시지와 함께 리다이렉트
                 res.sendRedirect("/admin/category?message=InsertFail&type=error");

@@ -92,32 +92,88 @@
     font-weight: 600;
   }
 
-  .category-select-form {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .category-menu {
     margin-bottom: 30px;
+    position: relative;
+    z-index: 100;
   }
 
-  .category-select-form label {
-    font-size: 16px;
-    font-weight: 500;
+  .category-root {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .category-item {
+    position: relative;
+  }
+
+  .category-item > a {
+    display: inline-block;
+    font-weight: bold;
     color: #2e7d32;
+    text-decoration: none;
+    padding: 8px 12px;
+    background-color: #e8f5e9;
+    border-radius: 6px;
+    transition: background-color 0.2s;
   }
 
-  .category-select-form select {
-    padding: 8px 12px;
+  .category-item > a:hover {
+    background-color: #c8e6c9;
+  }
+
+  .category-sub {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    list-style: none;
+    background: white;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.3s;
+    padding: 10px 0;
+    margin: 0;
+    display: none;
+    min-width: 180px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 200;
   }
 
-  .category-select-form select:hover,
-  .category-select-form select:focus {
-    border-color: #4caf50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+  .category-item:hover > .category-sub {
+    display: block;
+  }
+
+  .category-sub li {
+    position: relative;
+    padding: 0;
+  }
+
+  .category-sub a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .category-sub a:hover {
+    color: #4caf50;
+    font-weight: bold;
+    background-color: #f1f8f4;
+  }
+
+  .category-sub .category-sub {
+    top: 0;
+    left: 100%;
+    margin-left: 2px;
+    z-index: 300;
+  }
+
+  .category-sub li:hover > .category-sub {
+    display: block;
   }
 </style>
 
@@ -148,18 +204,46 @@
 
 
   <div class="main-content">
-    <form method="get" action="main" class="category-select-form">
-      <label for="categoryId">카테고리 선택:</label>
-      <select name="categoryId" id="categoryId" onchange="this.form.submit()">
-        <option value="">전체</option>
-        <% for (Category c : categoryList) { %>
-        <option value="<%= c.getNbCategory() %>"
-                <%= request.getParameter("categoryId") != null && request.getParameter("categoryId").equals(String.valueOf(c.getNbCategory())) ? "selected" : "" %>>
-          <%= c.getNmFullCategory() %>
-        </option>
-        <% } %>
-      </select>
-    </form>
+    <div class="category-menu">
+      <ul class="category-root">
+        <% for (Category parent : categoryList) {
+          if (parent.getNbCategory() == 0) { %>
+          <li class="category-item">
+            <a href="main?categoryId=" style="font-weight: bold; color: #2e7d32; text-decoration: none;">
+              <%= parent.getNmCategory() %>
+            </a>
+          </li>
+        <%
+          continue; }
+          if (parent.getNbParentCategory() == 0 && "Y".equals(parent.getYnUse()) && !"Y".equals(parent.getYnDelete())) { %>
+        <li class="category-item">
+          <!-- ✅ 부모 카테고리도 링크로 변경 -->
+          <a href="main?categoryId=<%= parent.getNbCategory() %>" style="font-weight: bold; color: #2e7d32; text-decoration: none;">
+            <%= parent.getNmCategory() %>
+          </a>
+
+          <ul class="category-sub">
+            <% for (Category child : categoryList) {
+              if (child.getNbParentCategory() == parent.getNbCategory() && "Y".equals(child.getYnUse()) && !"Y".equals(child.getYnDelete())) { %>
+            <li>
+              <a href="main?categoryId=<%= child.getNbCategory() %>"><%= child.getNmCategory() %></a>
+
+              <!-- ✅ 손자 카테고리(3단계) -->
+              <ul class="category-sub">
+                <% for (Category grandChild : categoryList) {
+                  if (grandChild.getNbParentCategory() == child.getNbCategory() && "Y".equals(grandChild.getYnUse()) && !"Y".equals(grandChild.getYnDelete())) { %>
+                <li>
+                  <a href="main?categoryId=<%= grandChild.getNbCategory() %>"><%= grandChild.getNmCategory() %></a>
+                </li>
+                <% } } %>
+              </ul>
+            </li>
+            <% } } %>
+          </ul>
+        </li>
+        <% } } %>
+      </ul>
+    </div>
     <div class="featured-section">
       <h2>추천 상품</h2>
 
