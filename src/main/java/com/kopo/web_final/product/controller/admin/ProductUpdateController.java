@@ -1,5 +1,6 @@
 package com.kopo.web_final.product.controller.admin;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.product.dao.CategoryProductMappingDao;
 import com.kopo.web_final.product.dao.ProductDao;
 import com.kopo.web_final.product.model.Product;
@@ -15,7 +16,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @WebServlet(name = "ProductUpdateController", value = "/admin/product-update")
-public class ProductUpdateController extends HttpServlet {
+public class ProductUpdateController implements Command {
     public ProductUpdateController() {
         super();
     }
@@ -83,5 +84,10 @@ public class ProductUpdateController extends HttpServlet {
                 }
             }
         }
+    }
+
+    @Override
+    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "";
     }
 }

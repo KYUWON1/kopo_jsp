@@ -12,7 +12,7 @@
 </head>
 <body>
     <%
-        response.sendRedirect("/main");
+        response.sendRedirect("/main.do");
     %>
 </body>
 </html>

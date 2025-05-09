@@ -2,6 +2,11 @@
 <%@ page import="com.kopo.web_final.type.ErrorType" %>
 <%
     String error = request.getParameter("error");
+    Member loginUser = (Member) request.getAttribute("loginUser");
+    if(loginUser == null){
+        response.sendRedirect("/member/login.jsp");
+        return;
+    }
 %>
 <style>
     body {

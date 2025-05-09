@@ -471,7 +471,7 @@
 // 존재하면 선택, 없으면 "없음" 선택 (value="0")
         categorySelect.value = exists ? categoryValue : "0";
 
-        document.getElementById('productForm').action = '/admin/product-update';
+        document.getElementById('productForm').action = '/productUpdate.do';
 
         // 상품 ID 필드 표시 (읽기 전용)
         document.getElementById('noProductField').style.display = 'block';
