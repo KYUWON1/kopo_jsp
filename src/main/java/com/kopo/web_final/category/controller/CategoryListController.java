@@ -29,7 +29,7 @@ public class CategoryListController extends HttpServlet {
             List<Category> categoryList = dao.getCategoryList();
 
             req.setAttribute("categoryList", categoryList);
-            req.getRequestDispatcher("/admin/category.jsp").forward(req, res);
+            req.getRequestDispatcher("/admin/category_management.jsp").forward(req, res);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

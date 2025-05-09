@@ -1,4 +1,4 @@
-package com.kopo.web_final.product.controller;
+package com.kopo.web_final.product.controller.admin;
 
 import com.kopo.web_final.product.dao.CategoryProductMappingDao;
 import com.kopo.web_final.product.dao.ProductDao;
@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serial;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;

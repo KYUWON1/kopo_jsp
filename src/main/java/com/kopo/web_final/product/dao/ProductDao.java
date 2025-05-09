@@ -17,7 +17,7 @@ public class ProductDao {
         this.conn = conn;
     }
 
-    public List<ProductDisplayDto> getProductListWithCategory() throws MemberException {
+    public List<ProductDisplayDto> getAllProductListWithCategory() throws MemberException {
         String sql = "SELECT\n" +
                 "    p.NO_PRODUCT AS NO_PRODUCT,\n" +
                 "    p.NM_PRODUCT AS NM_PRODUCT,\n" +
@@ -39,6 +39,58 @@ public class ProductDao {
 
         List<ProductDisplayDto> productDtoList = new ArrayList<>();
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                // Product 객체 생성 (원래 메소드 활용)
+                Product product = Product.BuildProduct(rs);
+
+                // 카테고리 정보 추출
+                int categoryId = rs.getInt("CATEGORY_ID");
+                String categoryName = rs.getString("CATEGORY_NAME");
+
+                // ProductDisplayDto 생성 및 추가
+                ProductDisplayDto dto = new ProductDisplayDto();
+                dto.setProduct(product);
+                dto.setCategoryId(categoryId);
+                dto.setCategoryName(categoryName);
+
+                productDtoList.add(dto);
+            }
+            return productDtoList;
+        } catch (SQLException e) {
+            e.printStackTrace(); // 디버깅을 위해 예외 출력
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public List<ProductDisplayDto> getProductListByCategoryId(String category) throws MemberException {
+        String sql = "SELECT\n" +
+                "    p.NO_PRODUCT AS NO_PRODUCT,\n" +
+                "    p.NM_PRODUCT AS NM_PRODUCT,\n" +
+                "    p.NM_DETAIL_EXPLAIN AS NM_DETAIL_EXPLAIN,\n" +
+                "    p.ID_FILE AS ID_FILE,\n" +
+                "    p.DT_START_DATE AS DT_START_DATE,\n" +
+                "    p.DT_END_DATE AS DT_END_DATE,\n" +
+                "    p.QT_CUSTOMER AS QT_CUSTOMER,\n" +
+                "    p.QT_SALE_PRICE AS QT_SALE_PRICE,\n" +
+                "    p.QT_STOCK AS QT_STOCK,\n" +
+                "    p.QT_DELIVERY_FEE AS QT_DELIVERY_FEE,\n" +
+                "    p.NO_REGISTER AS NO_REGISTER,\n" +
+                "    p.DA_FIRST_DATE AS DA_FIRST_DATE,\n" +
+                "    NVL(c.NM_FULL_CATEGORY,'없음') AS CATEGORY_NAME,\n" +
+                "    NVL(m.NB_CATEGORY,0) AS CATEGORY_ID \n" +
+                "FROM tb_product p\n" +
+                "JOIN tb_category_product_mapping m ON p.no_product = m.no_product\n" +
+                "JOIN (\n" +
+                "    SELECT nb_category,nm_full_category FROM tb_category\n" +
+                "    start with nb_category = ? \n" +
+                "    connect by prior nb_category = nb_parent_category\n" +
+                ")c ON m.nb_category = c.nb_category";
+
+        List<ProductDisplayDto> productDtoList = new ArrayList<>();
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, Integer.parseInt(category));
+
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 // Product 객체 생성 (원래 메소드 활용)

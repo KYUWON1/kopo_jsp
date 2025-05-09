@@ -33,7 +33,7 @@ public class CategoryDao {
                 "    YN_DELETE,\n" +
                 "    NO_REGISTER,\n" +
                 "    DA_FIRST_DATE\n" +
-                "FROM TB_CATEGORY";
+                "FROM TB_CATEGORY ORDER BY CN_LEVEL, CN_ORDER";
         List<Category> categoryList = new ArrayList<>();
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
             ResultSet rs = pstmt.executeQuery();
@@ -157,7 +157,5 @@ public class CategoryDao {
     private Date toSqlDate(LocalDate localDate) {
         return localDate != null ? java.sql.Date.valueOf(localDate) : null;
     }
-
-
 
 }

@@ -19,7 +19,7 @@ public class CategoryDeleteController extends HttpServlet {
 
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         req.setCharacterEncoding("UTF-8"); // Y
-
+        System.out.println(req.getParameter("nbCategory"));
         try(Connection conn = Db.getConnection()){
             CategoryDao dao = new CategoryDao(conn);
 
