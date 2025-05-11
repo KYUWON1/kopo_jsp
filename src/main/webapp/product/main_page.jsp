@@ -192,6 +192,9 @@
 <%
   List<Category> categoryList = (List<Category>)request.getAttribute("categoryList");
   List<ProductDisplayDto> productListWithCategory = (List<ProductDisplayDto>)request.getAttribute("productListWithCategory");
+
+  Member loginUser = (Member) session.getAttribute("loginUser");
+
 %>
 
 <!-- 콘텐츠 영역 -->
@@ -209,7 +212,7 @@
         <% for (Category parent : categoryList) {
           if (parent.getNbCategory() == 0) { %>
           <li class="category-item">
-            <a href="main?categoryId=" style="font-weight: bold; color: #2e7d32; text-decoration: none;">
+            <a href="main.do?categoryId=" style="font-weight: bold; color: #2e7d32; text-decoration: none;">
               <%= parent.getNmCategory() %>
             </a>
           </li>
@@ -218,7 +221,7 @@
           if (parent.getNbParentCategory() == 0 && "Y".equals(parent.getYnUse()) && !"Y".equals(parent.getYnDelete())) { %>
         <li class="category-item">
           <!-- ✅ 부모 카테고리도 링크로 변경 -->
-          <a href="main?categoryId=<%= parent.getNbCategory() %>" style="font-weight: bold; color: #2e7d32; text-decoration: none;">
+          <a href="main.do?categoryId=<%= parent.getNbCategory() %>" style="font-weight: bold; color: #2e7d32; text-decoration: none;">
             <%= parent.getNmCategory() %>
           </a>
 
@@ -226,14 +229,14 @@
             <% for (Category child : categoryList) {
               if (child.getNbParentCategory() == parent.getNbCategory() && "Y".equals(child.getYnUse()) && !"Y".equals(child.getYnDelete())) { %>
             <li>
-              <a href="main?categoryId=<%= child.getNbCategory() %>"><%= child.getNmCategory() %></a>
+              <a href="main.do?categoryId=<%= child.getNbCategory() %>"><%= child.getNmCategory() %></a>
 
               <!-- ✅ 손자 카테고리(3단계) -->
               <ul class="category-sub">
                 <% for (Category grandChild : categoryList) {
                   if (grandChild.getNbParentCategory() == child.getNbCategory() && "Y".equals(grandChild.getYnUse()) && !"Y".equals(grandChild.getYnDelete())) { %>
                 <li>
-                  <a href="main?categoryId=<%= grandChild.getNbCategory() %>"><%= grandChild.getNmCategory() %></a>
+                  <a href="main.do?categoryId=<%= grandChild.getNbCategory() %>"><%= grandChild.getNmCategory() %></a>
                 </li>
                 <% } } %>
               </ul>

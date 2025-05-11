@@ -1,5 +1,6 @@
 package com.kopo.web_final.member.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.utils.Db;
@@ -16,14 +17,10 @@ import java.io.Serial;
 import java.net.URLEncoder;
 import java.sql.Connection;
 
-@WebServlet(name = "ChangePasswordController", value = "/member/change-password")
-public class ChangePasswordController extends HttpServlet {
+public class MemberPasswordUpdateCommand implements Command {
 
-    public ChangePasswordController() {
-        super();
-    }
-
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
         System.out.println("POST: change-password");
         // 로그인 사용자 확인
@@ -31,8 +28,7 @@ public class ChangePasswordController extends HttpServlet {
         Member loginUser = (Member) session.getAttribute("loginUser");
 
         if (loginUser == null) {
-            res.sendRedirect("/member/login.jsp");
-            return;
+            return "/member/login.jsp";
         }
 
         String idUser = req.getParameter("idUser");
@@ -42,9 +38,8 @@ public class ChangePasswordController extends HttpServlet {
 
         // 본인 확인
         if (!loginUser.getIdUser().equals(idUser)) {
-            String encodedError = URLEncoder.encode("비정상적인 접근입니다.", "UTF-8");
-            res.sendRedirect("/member/info.jsp?error=" + encodedError);
-            return;
+            req.setAttribute("message","비정상적인 접근입니다.");
+            req.setAttribute("type", "error");
         }
 
         try (Connection conn = Db.getConnection()) {
@@ -53,23 +48,23 @@ public class ChangePasswordController extends HttpServlet {
 
             // 현재 비밀번호 확인
             if (!member.getNmPaswd().equals(currentPassword)) {
-                String encodedError = URLEncoder.encode("현재 비밀번호가 일치하지 않습니다.", "UTF-8");
-                res.sendRedirect("/member/info.jsp?passwordError=" + encodedError);
-                return;
+                req.setAttribute("message","현재 비밀번호가 일치하지 않습니다.");
+                req.setAttribute("type", "error");
+                return "/member/info.jsp";
             }
 
             // 새 비밀번호 확인
             if (!newPassword.equals(confirmPassword)) {
-                String encodedError = URLEncoder.encode("새 비밀번호가 일치하지 않습니다.", "UTF-8");
-                res.sendRedirect("/member/info.jsp?passwordError=" + encodedError);
-                return;
+                req.setAttribute("message","새 비밀번호가 일치하지 않습니다.");
+                req.setAttribute("type", "error");
+                return "/member/info.jsp";
             }
 
             // 새 비밀번호가 현재 비밀번호와 같은지 확인
             if (currentPassword.equals(newPassword)) {
-                String encodedError = URLEncoder.encode("새 비밀번호가 현재 비밀번호와 같습니다.", "UTF-8");
-                res.sendRedirect("/member/info.jsp?passwordError=" + encodedError);
-                return;
+                req.setAttribute("message","새 비밀번호가 현재 비밀번호와 같습니다.");
+                req.setAttribute("type", "error");
+                return "/member/info.jsp";
             }
 
             // 비밀번호 업데이트
@@ -83,16 +78,19 @@ public class ChangePasswordController extends HttpServlet {
                 loginUser.setNmEncPaswd(newPassword);
                 session.setAttribute("loginUser", loginUser);
 
-                String encodedMessage = URLEncoder.encode("비밀번호가 성공적으로 변경되었습니다.", "UTF-8");
-                res.sendRedirect("/member/info.jsp?message=" + encodedMessage);
+                req.setAttribute("message","비밀번호가 성공적으로 변경되었습니다.");
+                req.setAttribute("type", "success");
             } else {
-                String encodedError = URLEncoder.encode("비밀번호 변경에 실패했습니다.", "UTF-8");
-                res.sendRedirect("/member/info.jsp?error=" + encodedError);
+                req.setAttribute("message","비밀번호 변경에 실패했습니다.");
+                req.setAttribute("type", "error");
+                return "/member/info.jsp";
             }
         } catch (Exception e) {
-            String encodedError = URLEncoder.encode("서버 오류가 발생했습니다: " + e.getMessage(), "UTF-8");
-            res.sendRedirect("/member/info.jsp?error=" + encodedError);
+            e.printStackTrace();
+            res.sendRedirect("/error/500.jsp");
         }
+
+        return "/member/info.jsp";
     }
 }
 

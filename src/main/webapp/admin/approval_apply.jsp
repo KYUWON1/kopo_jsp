@@ -339,7 +339,7 @@
                         <td>
                             <div class="btn-group">
                                 <!-- 단일 승인 버튼 -->
-                                <form action="/admin/member-approval" method="POST" style="display:inline;">
+                                <form action="memberApproval.do" method="POST" style="display:inline;">
                                     <input type="hidden" name="idUser" value="<%= member.getIdUser() %>" />
                                     <input type="hidden" name="action" value="<%= actionValue %>" />
                                     <button type="submit" class="btn <%= buttonClass %>"><%= buttonText %></button>

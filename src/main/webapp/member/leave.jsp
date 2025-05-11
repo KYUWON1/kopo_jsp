@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.type.ErrorType" %>
 <%
-    String error = request.getParameter("error");
-    Member loginUser = (Member) request.getAttribute("loginUser");
+    String error = (String)request.getAttribute("error");
+    Member loginUser = (Member) session.getAttribute("loginUser");
     if(loginUser == null){
         response.sendRedirect("/member/login.jsp");
         return;
@@ -202,12 +202,11 @@
         </div>
     </div>
 
-    <form method="post" action="/member/leave" onsubmit="return validateForm()">
+    <form method="post" action="memberLeave.do" onsubmit="return validateForm()">
         <input type="hidden" name="idUser" value="<%= loginUser.getIdUser() %>">
-        <input type="hidden" name="password" value="<%= loginUser.getNmPaswd() %>">
         <div class="form-group">
             <label for="password">비밀번호 확인</label>
-            <input type="password" id="password" name="passwordCheck" class="form-input"
+            <input type="password" id="password" name="password" class="form-input"
                    placeholder="본인 확인을 위해 비밀번호를 입력해주세요">
         </div>
 
@@ -222,10 +221,11 @@
             <button type="button" class="btn-cancel" onclick="location.href='/'">취소</button>
             <button type="submit" class="btn-leave">탈퇴하기</button>
         </div>
-        <% if (error != null && !error.isEmpty()) {
-            String msg = ErrorType.valueOf(error).getMessage();
+        <%
+            if (error != null && !error.isEmpty()) {
         %>
-        <div class="error"><%= msg %></div>
+            <div class="error"><%= error %></div>
+
         <% } %>
         <div class="info-message">
             <a href="/member/info_auth.jsp">개인정보 관리로 돌아가기</a>

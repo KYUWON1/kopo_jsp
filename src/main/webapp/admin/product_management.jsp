@@ -17,8 +17,8 @@
     }
 
     // 처리 결과 메시지
-    String message = request.getParameter("message");
-    String messageType = request.getParameter("type"); // success 또는 error
+    String message = (String)request.getAttribute("message");
+    String messageType = (String)request.getAttribute("type"); // success 또는 error
 
     // 임시 상품 데이터 (실제로는 DB에서 가져와야 함)
     List<ProductDisplayDto> productList = (List<ProductDisplayDto>)request.getAttribute("productListWithCategory");
@@ -407,7 +407,7 @@
     function openAddModal() {
         document.getElementById('productForm').reset();
         document.getElementById('modalTitle').textContent = '상품 추가';
-        document.getElementById('productForm').action = '/admin/product-insert';
+        document.getElementById('productForm').action = 'productInsert.do';
 
         // 오늘 날짜와 1년 후 날짜로 기본값 설정
         var today = new Date().toISOString().split('T')[0];
@@ -653,7 +653,7 @@
             <h3 id="modalTitle" class="modal-title">상품 추가</h3>
             <span class="close">&times;</span>
         </div>
-        <form id="productForm" method="post" action="/admin/product-insert">
+        <form id="productForm" method="post" action="productInsert.do">
             <div id="noProductField" class="form-group" style="display: none;">
                 <label for="noProduct">상품 코드</label>
                 <input type="text" id="noProduct" name="noProduct" class="form-input" readonly>
@@ -756,7 +756,7 @@
 </div>
 
 <!-- 숨김 삭제 폼 -->
-<form id="deleteForm" method="post" action="/admin/product-delete" style="display:none;">
+<form id="deleteForm" method="post" action="productDelete.do" style="display:none;">
     <input type="hidden" id="deleteId" name="noProduct">
     <input type="hidden" id="deleteCategoryId" name="nmCategory">
 </form>

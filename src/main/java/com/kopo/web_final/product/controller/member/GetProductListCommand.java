@@ -43,6 +43,6 @@ public class GetProductListCommand implements Command {
             e.printStackTrace();
             return "/500.do";
         }
-        return "/main.do";
+        return "/product/main_page.jsp";
     }
 }

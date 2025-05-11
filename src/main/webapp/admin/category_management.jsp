@@ -14,8 +14,8 @@
     }
 
     // 처리 결과 메시지 (추가, 수정, 삭제 후 리다이렉트 시 전달됨)
-    String message = request.getParameter("message");
-    String messageType = request.getParameter("type"); // success 또는 error
+    String message = (String)request.getAttribute("message");
+    String messageType = (String)request.getAttribute("type"); // success 또는 error
     
     // 임시 카테고리 데이터 (실제로는 DB에서 가져와야 함)
     List<Category> categoryList = (List<Category>)request.getAttribute("categoryList");
@@ -390,7 +390,7 @@ function openAddModal() {
     console.log("카테고리 추가 모달 열기");
     document.getElementById('categoryForm').reset();
     document.getElementById('modalTitle').textContent = '카테고리 추가';
-    document.getElementById('categoryForm').action = '/admin/category-insert';
+    document.getElementById('categoryForm').action = 'categoryInsert.do';
     
     // 체크박스 초기화
     document.getElementById('ynUse').checked = true;
@@ -433,7 +433,7 @@ function closeModal() {
         document.getElementById('cnLevel').value = level;
         document.getElementById('cnOrder').value = order;
         document.getElementById('ynUse').checked = (ynUse === 'Y');
-        document.getElementById('categoryForm').action = '/admin/category-update';
+        document.getElementById('categoryForm').action = 'categoryUpdate.do';
         document.getElementById('categoryModal').style.display = 'block';
         // 수정에서는 카테고리 번호 필드를 보이게 함 (읽기 전용)
         document.getElementById('nbCategoryField').style.display = 'block';
@@ -654,7 +654,7 @@ function closeModal() {
             <h3 id="modalTitle" class="modal-title">카테고리 추가</h3>
             <span class="close">&times;</span>
         </div>
-        <form id="categoryForm" method="post" action="/admin/category-insert">
+        <form id="categoryForm" method="post" action="categoryInsert.do">
             <div id="nbCategoryField" class="form-group">
                 <label for="nbCategory">카테고리 ID</label>
                 <input type="number" id="nbCategory" name="nbCategory" class="form-input" readonly>
@@ -722,12 +722,12 @@ function closeModal() {
 
 
 <!-- 삭제 폼 (숨김) -->
-<form id="deleteForm" method="post" action="/admin/category-delete" style="display: none;">
+<form id="deleteForm" method="post" action="categoryDelete.do" style="display: none;">
     <input type="hidden" id="deleteId" name="nbCategory">
 </form>
 
 <!-- 상태 변경 폼 (숨김) -->
-<form id="statusForm" method="post" action="/admin/category-update-status" style="display: none;">
+<form id="statusForm" method="post" action="categoryStatusUpdate.do" style="display: none;">
     <input type="hidden" id="statusId" name="nbCategory">
     <input type="hidden" id="statusActive" name="ynUse">
 </form>

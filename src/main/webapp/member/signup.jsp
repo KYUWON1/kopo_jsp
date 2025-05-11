@@ -183,7 +183,7 @@
 <div class="signup-container">
     <h2>회원가입</h2>
     
-    <form action="/member/join" method="post" id="signupForm">
+    <form action="memberJoin.do" method="post" id="signupForm">
         <div class="form-group">
             <label for="email">이메일</label>
             <input type="email" id="email" name="email" class="form-input" required>

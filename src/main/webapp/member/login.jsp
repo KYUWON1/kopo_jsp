@@ -109,7 +109,7 @@
     <div class="error"><%= error %></div>
     <% } %>
 
-    <form action="/member/login" method="post">
+    <form action="login.do" method="post">
         <div class="form-group">
             <label for="email">이메일</label>
             <input type="email" id="email" name="email" class="form-input" required>

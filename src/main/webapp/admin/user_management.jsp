@@ -13,6 +13,7 @@
 
     // 처리 결과 메시지
     String message = (String) request.getAttribute("message");
+
 %>
 <!DOCTYPE html>
 <html>
@@ -338,7 +339,7 @@
         </div>
         <div class="card-body">
             <div class="table-container">
-                <form action="/admin/member-update" method="post">
+                <form action="memberStatusUpdate.do" method="post">
                     <table id="membersTable">
                         <thead>
                         <tr>

@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.member.model.Member" %>
-<%@ page import="java.net.URLDecoder" %>
 <%
     // 로그인 체크
     Member loginUser = (Member) session.getAttribute("loginUser");
@@ -9,28 +8,10 @@
         return;
     }
 
-    // 인증 성공 메시지 처리
-    String authSuccess = request.getParameter("authSuccess");
-    if (authSuccess != null && !authSuccess.isEmpty()) {
-        authSuccess = URLDecoder.decode(authSuccess, "UTF-8");
-    }
-
-    // 기존 메시지/에러 처리
-    String message = request.getParameter("message");
-    if (message != null && !message.isEmpty()) {
-        message = URLDecoder.decode(message, "UTF-8");
-    }
-
-    String error = (String) request.getAttribute("error");
-    if (error != null && !error.isEmpty()) {
-        error = URLDecoder.decode(error);
-    }
-    // 비밀번호 검증 실패 시 모달창을 다시 열기 위한 파라미터
-    String passwordError = request.getParameter("passwordError");
-    if (passwordError != null && !passwordError.isEmpty()) {
-        passwordError = URLDecoder.decode(passwordError, "UTF-8");
-    }
-
+    // 공통 메시지 처리
+    String message = (String) request.getAttribute("message");
+    String type = (String) request.getAttribute("type"); // "success" 또는 "error"
+    String passwordError = (String) request.getAttribute("passwordError");
 %>
 <!DOCTYPE html>
 <html>
@@ -363,23 +344,17 @@
 <div class="form-container">
     <h2>개인정보 수정</h2>
 
-    <% if (authSuccess != null && !authSuccess.isEmpty()) { %>
-    <div class="alert alert-success"><%= authSuccess %></div>
-    <% } %>
-
     <% if (message != null && !message.isEmpty()) { %>
-    <div class="alert alert-success"><%= message %></div>
-    <% } %>
-
-    <% if (error != null && !error.isEmpty()) { %>
-    <div class="alert alert-error"><%= error %></div>
+    <div class="alert <%= "success".equals(type) ? "alert-success" : "alert-error" %>">
+        <%= message %>
+    </div>
     <% } %>
 
     <% if (passwordError != null && !passwordError.isEmpty()) { %>
     <div class="alert alert-error"><%= passwordError %></div>
     <% } %>
 
-    <form method="post" action="/member/update" id="updateForm">
+    <form method="post" action="memberInfoUpdate.do" id="updateForm">
         <input type="hidden" name="idUser" value="<%= loginUser.getIdUser() %>">
         <input type="hidden" name="bfEmail" value="<%= loginUser.getNmEmail() %>">
 
@@ -425,7 +400,7 @@
         <span class="modal-close">&times;</span>
         <h3 class="modal-title">비밀번호 변경</h3>
 
-        <form action="/member/change-password" method="POST" id="passwordForm">
+        <form action="memberPasswordUpdate.do" method="POST" id="passwordForm">
             <input type="hidden" name="idUser" value="<%= loginUser.getIdUser() %>">
             <input type="hidden" id="realCurrentPassword" value="<%= loginUser.getNmPaswd() %>">
 

@@ -1,5 +1,6 @@
 package com.kopo.web_final.product.controller.admin;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.category.dao.CategoryDao;
 import com.kopo.web_final.category.model.Category;
 import com.kopo.web_final.product.dao.ProductDao;
@@ -14,13 +15,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 
-@WebServlet(name = "ProductListController", value = "/admin/product")
-public class ProductListController extends HttpServlet {
-    public ProductListController() {
-        super();
-    }
+public class GetProductManagementListCommand implements Command {
 
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
         try(Connection conn = Db.getConnection()) {
@@ -32,9 +30,11 @@ public class ProductListController extends HttpServlet {
 
             req.setAttribute("categoryList", categoryList);
             req.setAttribute("productListWithCategory", productListWithCategory);
-            req.getRequestDispatcher("/admin/product_management.jsp").forward(req, res);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
+
+        return "/admin/product_management.jsp";
     }
 }

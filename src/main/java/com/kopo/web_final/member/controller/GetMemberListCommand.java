@@ -1,5 +1,6 @@
 package com.kopo.web_final.member.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.type.UserStatus;
@@ -17,14 +18,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name = "MemberListController", value = "/admin/member-list")
-public class MemberListController extends HttpServlet {
-
-    public MemberListController() {
-        super();
-    }
-
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+public class GetMemberListCommand implements Command {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
         String status = req.getParameter("status");
         String message = req.getParameter("message");
@@ -62,34 +58,23 @@ public class MemberListController extends HttpServlet {
             List<Member> memberList = dao.getActiveMemberList(uStatus);
             req.setAttribute("memberList", memberList);
 
-            for(Member member : memberList){
-                System.out.println(member.getIdUser());
-            }
-
             // 페이지 포워딩
             switch (status) {
                 case "active":
-                    req.getRequestDispatcher("/admin/user_management.jsp").forward(req, res);
-                    break;
+                    return "/admin/user_management.jsp";
                 case "apply":
-                    req.getRequestDispatcher("/admin/approval_apply.jsp").forward(req, res);
-                    break;
+                    return "/admin/approval_apply.jsp";
                 case "withdraw":
-                    req.getRequestDispatcher("/admin/approval_apply.jsp").forward(req, res);
-                    break;
+                    return "/admin/approval_apply.jsp";
                 default:
-                    req.getRequestDispatcher("/admin/user_management.jsp").forward(req, res);
-                    break;
+                    return "/admin/user_management.jsp";
             }
         } catch (Exception e) {
             // 예외 처리
             e.printStackTrace();
-            req.setAttribute("message", "오류가 발생했습니다: " + e.getMessage());
-            try {
-                req.getRequestDispatcher("/admin/user_management.jsp").forward(req, res);
-            } catch (ServletException se) {
-                se.printStackTrace();
-            }
+            req.setAttribute("message", "오류가 발생했습니다");
+            return "/admin/user_management.jsp";
         }
+
     }
 }

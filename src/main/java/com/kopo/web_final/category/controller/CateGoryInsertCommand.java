@@ -1,5 +1,6 @@
 package com.kopo.web_final.category.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.category.dao.CategoryDao;
 import com.kopo.web_final.category.model.Category;
 import com.kopo.web_final.utils.Db;
@@ -13,19 +14,20 @@ import java.io.PrintWriter;
 import java.io.Serial;
 import java.net.URLEncoder;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
-@WebServlet(name = "CategoryUpdateController", value = "/admin/category-update")
-public class CategoryUpdateController extends HttpServlet {
-    public CategoryUpdateController() {
+@WebServlet(name = "CategoryInsertController", value = "/admin/category-insert")
+public class CateGoryInsertCommand implements Command {
+    public CateGoryInsertCommand() {
         super();
     }
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
         Category category = new Category();
-        String noCategory = req.getParameter("nbCategory");
 
         // nbParentCategory 처리
         String parentCategoryStr = req.getParameter("nbParentCategory");
@@ -43,25 +45,30 @@ public class CategoryUpdateController extends HttpServlet {
 
         // ynUse 값을 ynUser 대신 정확하게 처리
         String ynUse = req.getParameter("ynUse");
+        System.out.println(ynUse);
         category.setYnUse(ynUse); // "Y" 또는 "N"
 
+        category.setNoRegister(req.getParameter("noRegister"));
+        category.setYnDelete("N");
+        category.setDaFirstDate(LocalDate.now());
 
         try(Connection conn = Db.getConnection()) {
             CategoryDao dao = new CategoryDao(conn);
 
-            int result = dao.updateCategory(noCategory,category);
+            int result = dao.insertCategory(category);
             if(result < 1){
                 // 실패 메시지와 함께 리다이렉트
-                res.sendRedirect("/admin/category?message=InsertFail&type=error");
-                return;
+                req.setAttribute("message","InsertFail");
+                req.setAttribute("type","error");
             }
             // 성공 메시지와 함께 리다이렉트
-            res.sendRedirect("/admin/category?message=" +
-                    URLEncoder.encode("카테고리가 업데이트되었습니다.", "UTF-8") +
-                    "&type=success");
+            req.setAttribute("message","InsertSuccess");
+            req.setAttribute("type","success");
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        return "categoryManagement.do";
     }
 }

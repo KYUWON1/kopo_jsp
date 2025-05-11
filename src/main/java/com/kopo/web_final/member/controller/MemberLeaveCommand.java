@@ -1,5 +1,6 @@
 package com.kopo.web_final.member.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.exception.MemberException;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
@@ -17,13 +18,10 @@ import java.io.Serial;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(name = "LeaveController", value = "/member/leave")
-public class LeaveController extends HttpServlet {
-    public LeaveController() {
-        super();
-    }
+public class MemberLeaveCommand implements Command {
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
         String idUser = req.getParameter("idUser");
         String password = req.getParameter("password");
@@ -37,24 +35,24 @@ public class LeaveController extends HttpServlet {
 
             Member member = dao.findById(idUser);
             if(!member.getNmPaswd().equals(password)){
-                System.out.println("확인 비밀번호가 일치하지않습니다.");
-                res.sendRedirect(req.getContextPath() + "/member/leave.jsp?error=" + ErrorType.INVALID_CREDENTIALS);
-                return;
+                req.setAttribute("error", "PasswordNotMatch");
+                return "/member/leave.jsp";
             }
 
             int result = dao.updateStatus(idUser, UserStatus.ST03); // ST02: 탈퇴 상태
 
-            if (result == 1) {
-                // 세션 종료
-                req.getSession().invalidate();
-                // 메인으로 리다이렉트
-                res.sendRedirect(req.getContextPath() + "/index.jsp?leave=success");
-            } else {
-                res.sendRedirect(req.getContextPath() + "/member/leave.jsp?error=" + ErrorType.INTERNAL_ERROR);
+            if (result != 1) {
+                req.setAttribute("error", "DeleteFail");
+                return "/member/leave.jsp";
             }
-
+            // 세션 종료
+            req.getSession().invalidate();
+            // 메인으로 리다이렉트
+            req.setAttribute("leave", "success");
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        return "main.do";
     }
 }

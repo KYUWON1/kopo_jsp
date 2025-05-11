@@ -201,7 +201,7 @@
     개인정보 보호를 위해 비밀번호를 한번 더 입력해주세요.
   </div>
 
-  <form action="/member/info-auth" method="POST">
+  <form action="memberInfoAuth.do" method="POST">
     <input type="hidden" name="idUser" value="<%= loginUser.getIdUser() %>">
 
     <div class="form-group">

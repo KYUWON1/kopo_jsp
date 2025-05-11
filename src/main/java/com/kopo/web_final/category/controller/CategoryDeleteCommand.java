@@ -1,5 +1,6 @@
 package com.kopo.web_final.category.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.category.dao.CategoryDao;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,13 +12,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 
-@WebServlet(name = "CategoryDeleteController", value = "/admin/category-delete")
-public class CategoryDeleteController extends HttpServlet {
-    public CategoryDeleteController() {
-        super();
-    }
-
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+public class CategoryDeleteCommand implements Command {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8"); // Y
         System.out.println(req.getParameter("nbCategory"));
         try(Connection conn = Db.getConnection()){
@@ -27,16 +24,15 @@ public class CategoryDeleteController extends HttpServlet {
 
             if(result < 1){
                 // 실패 메시지와 함께 리다이렉트
-                res.sendRedirect("/admin/category?message=UpdateFail&type=error");
-                return;
+                req.setAttribute("message","DeleteFail");
+                req.setAttribute("type","error");
             }
-            // 성공 메시지와 함께 리다이렉트
-            res.sendRedirect("/admin/category?message=" +
-                    URLEncoder.encode("카테고리가 성공적으로 삭제처리되었습니다.", "UTF-8") +
-                    "&type=success");
+            req.setAttribute("message","DeleteSuccess");
+            req.setAttribute("type","success");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+        return "categoryManagement.do";
     }
 }

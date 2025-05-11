@@ -1,5 +1,6 @@
 package com.kopo.web_final.member.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.type.ErrorType;
@@ -16,14 +17,9 @@ import java.io.Serial;
 import java.net.URLEncoder;
 import java.sql.Connection;
 
-@WebServlet(name = "UpdateController", value = "/member/update")
-public class UpdateController extends HttpServlet {
-
-    public UpdateController() {
-        super();
-    }
-
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+public class MemberInfoUpdateCommand implements Command {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
         try (Connection conn = Db.getConnection()) {
@@ -40,9 +36,9 @@ public class UpdateController extends HttpServlet {
             // 이메일이 변경되었을 때만 중복 검증 수행
             if (!email.equals(bfEmail) && dao.checkEmailExist(email) > 0) {
                 System.out.println("해당 이메일은 이미 존재합니다.");
-                req.setAttribute("error", ErrorType.DUPLICATE_ID.getMessage());
-                req.getRequestDispatcher("/member/info.jsp").forward(req, res);
-                return;
+                req.setAttribute("message", ErrorType.DUPLICATE_ID.getMessage());
+                req.setAttribute("type", "error");
+                return "/member/info.jsp";
             }
 
             HttpSession session = req.getSession();
@@ -61,16 +57,16 @@ public class UpdateController extends HttpServlet {
                 loginUser.setNmUser(username);
                 loginUser.setNoMobile(phoneNumber);
                 session.setAttribute("loginUser", loginUser);
-
-                String encodedMessage = URLEncoder.encode("회원 정보가 성공적으로 수정되었습니다.", "UTF-8");
-                res.sendRedirect("/member/info.jsp?message=" + encodedMessage);
+                req.setAttribute("message", "회원 정보가 성공적으로 수정되었습니다.");
+                req.setAttribute("type", "success");
             } else {
-                String encodedError = URLEncoder.encode("회원 정보 수정에 실패했습니다.", "UTF-8");
                 req.setAttribute("error",ErrorType.INTERNAL_ERROR.getMessage());
-                res.sendRedirect("/member/info.jsp");
+                req.setAttribute("message", "회원 정보 수정에 실패했습니다.");
+                req.setAttribute("type", "error");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return "/member/info.jsp";
     }
 }

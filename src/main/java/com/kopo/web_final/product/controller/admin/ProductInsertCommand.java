@@ -1,42 +1,29 @@
 package com.kopo.web_final.product.controller.admin;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.product.dao.CategoryProductMappingDao;
 import com.kopo.web_final.product.dao.ProductDao;
 import com.kopo.web_final.product.model.CategoryProductMapping;
 import com.kopo.web_final.product.model.Product;
 import com.kopo.web_final.utils.Db;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.sql.Connection;
 import java.time.LocalDate;
 
-@WebServlet(name = "ProductInsertController", value = "/admin/product-insert")
-public class ProductInsertController extends HttpServlet {
-    public ProductInsertController() {
-        super();
-    }
+public class ProductInsertCommand implements Command {
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
-        // 순서값이랑 카테고리 번호 가져옴
-        System.out.println(req.getParameter("cnOrder"));
-        System.out.println(req.getParameter("nbCategory"));
-
-        System.out.println(req.getParameter("qtCustomer"));
-
-        System.out.println(req.getParameter("dtEndDate").replace("-",""));
         Product product = new Product();
         product.setNmProduct(req.getParameter("nmProduct"));
         product.setNmDetailExplain(req.getParameter("nmDetailExplain"));
         product.setIdFile("none");
-        product.setDtStartDate(req.getParameter("dtStartDate").replace("-",""));
-        product.setDtEndDate(req.getParameter("dtEndDate").replace("-",""));
+        product.setDtStartDate(req.getParameter("dtStartDate").replace("-", ""));
+        product.setDtEndDate(req.getParameter("dtEndDate").replace("-", ""));
         product.setQtCustomer(Integer.parseInt(req.getParameter("qtCustomer")));
         product.setQtSalePrice(Integer.parseInt(req.getParameter("qtSalePrice")));
         product.setQtStock(Integer.parseInt(req.getParameter("qtStock")));
@@ -50,52 +37,39 @@ public class ProductInsertController extends HttpServlet {
         categoryProductMapping.setDaFirstDate(LocalDate.now());
         categoryProductMapping.setNoRegister(req.getParameter("noRegister"));
 
-        Connection conn = null;
-
-        try {
-            conn = Db.getConnection();
+        try (Connection conn = Db.getConnection()) {
             conn.setAutoCommit(false);
 
             ProductDao dao = new ProductDao(conn);
             String productId = dao.insertProduct(product);
             if (productId == null || productId.isEmpty()) {
                 conn.rollback();
-                res.sendRedirect("/admin/product?message=InsertFail&type=error");
-                return;
+                req.setAttribute("message", "상품 등록에 실패했습니다.");
+                req.setAttribute("type", "error");
+                return "productManagement.do";
             }
 
-
             CategoryProductMappingDao cpMappingDao = new CategoryProductMappingDao(conn);
-
             categoryProductMapping.setNoProduct(productId);
             int ctmResult = cpMappingDao.insertCpMapping(categoryProductMapping);
             if (ctmResult < 1) {
                 conn.rollback();
-                res.sendRedirect("/admin/product?message=InsertFail&type=error");
-                return;
+                req.setAttribute("message", "카테고리 매핑 등록에 실패했습니다.");
+                req.setAttribute("type", "error");
+                return "productManagement.do";
             }
 
             conn.commit();
-            res.sendRedirect("/admin/product?message=" +
-                    URLEncoder.encode("상품이 성공적으로 추가되었습니다.", "UTF-8") +
-                    "&type=success");
+            req.setAttribute("message", "상품이 성공적으로 추가되었습니다.");
+            req.setAttribute("type", "success");
+
         } catch (Exception e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (Exception rollbackEx) {
-                    rollbackEx.printStackTrace(); // 로그 기록
-                }
-            }
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close(); // 연결 반환
-                } catch (Exception closeEx) {
-                    closeEx.printStackTrace(); // 로그 기록
-                }
-            }
+            req.setAttribute("message", "오류 발생: " + e.getMessage());
+            req.setAttribute("type", "error");
+            e.printStackTrace();
+            return "productManagement.do";
         }
+
+        return "productManagement.do"; // 또는 실제 뷰 경로
     }
 }

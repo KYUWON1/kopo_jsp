@@ -1,5 +1,6 @@
 package com.kopo.web_final.member.controller;
 
+import com.kopo.web_final.Command;
 import com.kopo.web_final.exception.MemberException;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
@@ -14,14 +15,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(name = "JoinController", value = "/member/join")
-public class JoinController extends HttpServlet {
-
-    public JoinController() {
-        super();
-    }
-
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+public class MemberJoinCommand implements Command {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
         try(Connection conn = Db.getConnection()){
@@ -31,8 +27,7 @@ public class JoinController extends HttpServlet {
             if(dao.checkEmailExist(req.getParameter("email")) > 0){
                 System.out.println("해당 이메일은 존재합니다.");
                 req.setAttribute("error", ErrorType.DUPLICATE_ID.getMessage());
-                req.getRequestDispatcher("/member/signup.jsp").forward(req, res);
-                return;
+               return "/member/signup.jsp";
             }
 
             int result = dao.insertMember(Member.buildMember(
@@ -45,14 +40,14 @@ public class JoinController extends HttpServlet {
             if(result != 1){
                 System.out.println("가입 에러 발생.");
                 req.setAttribute("error", ErrorType.INTERNAL_ERROR);
-                req.getRequestDispatcher("/member/signup.jsp").forward(req, res);
-                return;
+                return "/member/signup.jsp";
             }
             req.setAttribute("userName", req.getParameter("userName"));
-            req.getRequestDispatcher("/member/signup_success.jsp").forward(req, res);
-        } catch (Exception e) {
+          } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+
+        return "/member/signup_success.jsp";
     }
 }
