@@ -126,11 +126,12 @@
             <% } else if ("_20".equals(userType)) { %>
             <a href="categoryManagement.do">카테고리 관리</a>
             <a href="productManagement.do">상품 관리</a>
-            <a href="getMemberList.do?status=active">회원 관리</a>
-            <a href="getMemberList.do?status=apply">가입 승인</a>
-            <a href="getMemberList.do?status=withdraw">탈퇴 승인</a>
+            <a href="memberManagement.do?status=active">회원 관리</a>
+            <a href="memberManagement.do?status=apply">가입 승인</a>
+            <a href="memberManagement.do?status=withdraw">탈퇴 승인</a>
             <a href="/member/logout.jsp">로그아웃</a>
             <% } else { %>
+            <a href="getBasket.do">장바구니</a>
             <a href="/member/info_auth.jsp">개인정보</a>
             <a href="/member/leave.jsp">회원탈퇴</a>
             <a href="/member/logout.jsp">로그아웃</a>

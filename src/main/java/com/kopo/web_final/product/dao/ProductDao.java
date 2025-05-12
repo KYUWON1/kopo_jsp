@@ -32,10 +32,12 @@ public class ProductDao {
                 "    p.NO_REGISTER AS NO_REGISTER,\n" +
                 "    p.DA_FIRST_DATE AS DA_FIRST_DATE,\n" +
                 "    NVL(c.NM_FULL_CATEGORY,'없음') AS CATEGORY_NAME,\n" +
-                "    NVL(pc.NB_CATEGORY,0) AS CATEGORY_ID \n" +
+                "    NVL(pc.NB_CATEGORY,0) AS CATEGORY_ID, \n" +
+                "    ct.ID_FILE AS ID_FILE \n" +
                 "FROM TB_PRODUCT p\n" +
                 "LEFT JOIN TB_CATEGORY_PRODUCT_MAPPING pc ON p.NO_PRODUCT = pc.NO_PRODUCT\n" +
-                "LEFT JOIN TB_CATEGORY c ON pc.NB_CATEGORY = c.NB_CATEGORY";
+                "LEFT JOIN TB_CATEGORY c ON pc.NB_CATEGORY = c.NB_CATEGORY\n" +
+                "LEFT JOIN TB_CONTENT ct ON p.ID_FILE = ct.ID_FILE";
 
         List<ProductDisplayDto> productDtoList = new ArrayList<>();
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -47,12 +49,13 @@ public class ProductDao {
                 // 카테고리 정보 추출
                 int categoryId = rs.getInt("CATEGORY_ID");
                 String categoryName = rs.getString("CATEGORY_NAME");
-
+                String fileId = rs.getString("ID_FILE");
                 // ProductDisplayDto 생성 및 추가
                 ProductDisplayDto dto = new ProductDisplayDto();
                 dto.setProduct(product);
                 dto.setCategoryId(categoryId);
                 dto.setCategoryName(categoryName);
+                dto.setFileId(fileId);
 
                 productDtoList.add(dto);
             }
@@ -110,6 +113,89 @@ public class ProductDao {
                 productDtoList.add(dto);
             }
             return productDtoList;
+        } catch (SQLException e) {
+            e.printStackTrace(); // 디버깅을 위해 예외 출력
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public List<ProductDisplayDto> getFilteredProductList(int category, String keyword, String sort) throws MemberException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT\n" +
+                        "    p.NO_PRODUCT AS NO_PRODUCT,\n" +
+                        "    p.NM_PRODUCT AS NM_PRODUCT,\n" +
+                        "    p.NM_DETAIL_EXPLAIN AS NM_DETAIL_EXPLAIN,\n" +
+                        "    p.ID_FILE AS ID_FILE,\n" +
+                        "    p.DT_START_DATE AS DT_START_DATE,\n" +
+                        "    p.DT_END_DATE AS DT_END_DATE,\n" +
+                        "    p.QT_CUSTOMER AS QT_CUSTOMER,\n" +
+                        "    p.QT_SALE_PRICE AS QT_SALE_PRICE,\n" +
+                        "    p.QT_STOCK AS QT_STOCK,\n" +
+                        "    p.QT_DELIVERY_FEE AS QT_DELIVERY_FEE,\n" +
+                        "    p.NO_REGISTER AS NO_REGISTER,\n" +
+                        "    p.DA_FIRST_DATE AS DA_FIRST_DATE,\n" +
+                        "    NVL(c.NM_FULL_CATEGORY, '없음') AS CATEGORY_NAME,\n" +
+                        "    NVL(m.NB_CATEGORY, 0) AS CATEGORY_ID\n" +
+                        "FROM TB_PRODUCT p\n" +
+                        "JOIN TB_CATEGORY_PRODUCT_MAPPING m ON p.NO_PRODUCT = m.NO_PRODUCT\n" +
+                        "JOIN (\n" +
+                        "    SELECT NB_CATEGORY, NM_FULL_CATEGORY, CN_ORDER\n" +
+                        "    FROM TB_CATEGORY\n" +
+                        "    START WITH NB_CATEGORY = ? \n" +
+                        "    CONNECT BY PRIOR NB_CATEGORY = NB_PARENT_CATEGORY\n" +
+                        ") c ON m.NB_CATEGORY = c.NB_CATEGORY\n" +
+                        "WHERE p.NM_PRODUCT LIKE ?\n"
+        );
+
+        // 동적 정렬 구문 추가
+        if ("asc".equalsIgnoreCase(sort)) {
+            sql.append("ORDER BY p.QT_SALE_PRICE ASC, c.CN_ORDER, c.NM_FULL_CATEGORY");
+        } else if ("desc".equalsIgnoreCase(sort)) {
+            sql.append("ORDER BY p.QT_SALE_PRICE DESC, c.CN_ORDER, c.NM_FULL_CATEGORY");
+        } else {
+            sql.append("ORDER BY c.CN_ORDER, c.NM_FULL_CATEGORY"); // 기본 정렬
+        }
+
+        List<ProductDisplayDto> productDtoList = new ArrayList<>();
+        try(PreparedStatement pstmt = conn.prepareStatement(sql.toString())){
+            pstmt.setInt(1, category);
+            pstmt.setString(2, "%" + keyword + "%");
+
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                // Product 객체 생성 (원래 메소드 활용)
+                Product product = Product.BuildProduct(rs);
+
+                // 카테고리 정보 추출
+                int categoryId = rs.getInt("CATEGORY_ID");
+                String categoryName = rs.getString("CATEGORY_NAME");
+
+                // ProductDisplayDto 생성 및 추가
+                ProductDisplayDto dto = new ProductDisplayDto();
+                dto.setProduct(product);
+                dto.setCategoryId(categoryId);
+                dto.setCategoryName(categoryName);
+
+                productDtoList.add(dto);
+            }
+            return productDtoList;
+        } catch (SQLException e) {
+            e.printStackTrace(); // 디버깅을 위해 예외 출력
+            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public Product getProductDetailById(String productId) throws MemberException {
+        String sql = "SELECT * FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1,productId);
+
+            ResultSet rs = pstmt.executeQuery();
+            Product product = null;
+            while(rs.next()){
+                product = Product.BuildProduct(rs);
+            }
+            return product;
         } catch (SQLException e) {
             e.printStackTrace(); // 디버깅을 위해 예외 출력
             throw new MemberException(ErrorType.DB_QUERY_FAIL);
@@ -210,7 +296,5 @@ public class ProductDao {
     private Date toSqlDate(LocalDate localDate) {
         return localDate != null ? java.sql.Date.valueOf(localDate) : null;
     }
-
-
 
 }

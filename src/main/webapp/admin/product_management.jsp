@@ -9,6 +9,8 @@
 <%@ page import="com.kopo.web_final.category.model.Category" %>
 <%@ page import="com.kopo.web_final.product.dto.ProductDisplayDto" %>
 <%
+    // 업데이트 함수 수정해야함 삭제도
+
     // 관리자 로그인 확인
     Member loginUser = (Member) session.getAttribute("loginUser");
     if (loginUser == null || !"_20".equals(loginUser.getCdUserType())) {
@@ -442,7 +444,7 @@
     }
 
     // 상품 수정 모달 열기
-    function openEditModal(noProduct, nmProduct, nmDetailExplain, dtStartDate, dtEndDate, qtCustomer, qtSalePrice, qtStock, qtDeliveryFee, categoryId) {
+    function openEditModal(noProduct, nmProduct, nmDetailExplain, dtStartDate, dtEndDate, qtCustomer, qtSalePrice, qtStock, qtDeliveryFee, categoryId, idFile) {
         document.getElementById('productForm').reset();
         document.getElementById('modalTitle').textContent = '상품 수정';
         document.getElementById('noProduct').value = noProduct;
@@ -454,6 +456,11 @@
         document.getElementById('qtSalePrice').value = qtSalePrice;
         document.getElementById('qtStock').value = qtStock;
         document.getElementById('qtDeliveryFee').value = qtDeliveryFee;
+        document.getElementById('idFile').value = idFile;
+
+        const previewArea = document.getElementById('imagePreview');
+        const imageUrl = `getImage.do?id=${idFile}`;
+        previewArea.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; height: auto; margin-bottom: 10px;">`;
 
         // 상품 수정 모달 열기 함수 중...
         const categorySelect = document.getElementById('categorySelection');
@@ -468,6 +475,7 @@
             }
         }
 
+
 // 존재하면 선택, 없으면 "없음" 선택 (value="0")
         categorySelect.value = exists ? categoryValue : "0";
 
@@ -477,7 +485,6 @@
         document.getElementById('noProductField').style.display = 'block';
         document.getElementById('noProduct').readOnly = true;
 
-        // 모달 표시
         document.getElementById('productModal').style.display = 'block';
     }
 
@@ -582,8 +589,7 @@
                     <tr>
                         <td><%= product.getNoProduct() %></td>
                         <td>
-                            <img src="https://via.placeholder.com/60x60?text=<%= product.getNmProduct() %>"
-                                 alt="<%= product.getNmProduct() %>" class="product-thumbnail">
+                            <img src="getImage.do?id=<%= product.getIdFile() %>" alt="상품 이미지" style="max-width: 80%; max-height: 80%;">
                         </td>
                         <td><%= productDto.getCategoryName() %></td>
                         <td><%= product.getNmProduct() %></td>
@@ -613,6 +619,7 @@
                             <% } %>
                         </td>
                         <td class="actions">
+
                             <button class="btn btn-edit" onclick="openEditModal(
                                     '<%= product.getNoProduct() %>',
                                     '<%= product.getNmProduct() %>',
@@ -623,7 +630,8 @@
                                 <%= product.getQtSalePrice() %>,
                                 <%= product.getQtStock() %>,
                                 <%= product.getQtDeliveryFee() %>,
-                                <%= productDto.getCategoryId() %>  <!-- 이 부분 추가 -->
+                                <%= productDto.getCategoryId() %>,
+                                    '<%= productDto.getFileId() != null ? productDto.getFileId().trim() : "" %>'
                                     )">수정</button>
                             <button class="btn btn-delete"
                                     onclick="confirmDelete('<%= product.getNoProduct() %>', '<%= productDto.getCategoryId() %>')">
@@ -653,7 +661,8 @@
             <h3 id="modalTitle" class="modal-title">상품 추가</h3>
             <span class="close">&times;</span>
         </div>
-        <form id="productForm" method="post" action="productInsert.do">
+        <form id="productForm" method="post" action="productInsert.do" enctype="multipart/form-data">
+            <input type="hidden" id="idFile" name="idFile">
             <div id="noProductField" class="form-group" style="display: none;">
                 <label for="noProduct">상품 코드</label>
                 <input type="text" id="noProduct" name="noProduct" class="form-input" readonly>
@@ -726,6 +735,7 @@
 
             <div class="form-group">
                 <label for="productImage">상품 이미지</label>
+                <div id="imagePreview"></div> <!-- ⭐ 이미지 미리보기 영역 -->
                 <input type="file" id="productImage" name="productImage" class="form-input" accept="image/*">
             </div>
 

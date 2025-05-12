@@ -1,6 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String error = (String) request.getAttribute("error");
+
+    String message = (String) request.getAttribute("message");
+%>
+<%
+    if(message != null){
+%>
+    <script>alert("로그인이 필요한서비스입니다.")</script>
+<%
+    }
 %>
 <style>
     body {
