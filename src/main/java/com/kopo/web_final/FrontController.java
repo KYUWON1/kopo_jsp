@@ -22,8 +22,6 @@ public class FrontController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uri = request.getRequestURI();
         System.out.println("URI: " + uri);
-        String contextPath = request.getContextPath();
-        System.out.println("contextPath: " + contextPath);
         String commandKey = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf(".do"));
         System.out.println("commandKey: " + commandKey);
 

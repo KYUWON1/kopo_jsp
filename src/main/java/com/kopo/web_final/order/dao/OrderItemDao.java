@@ -1,6 +1,7 @@
 package com.kopo.web_final.order.dao;
 
 import com.kopo.web_final.exception.MemberException;
+import com.kopo.web_final.order.dto.GetOrderItemDto;
 import com.kopo.web_final.order.model.OrderItem;
 import com.kopo.web_final.type.ErrorType;
 
@@ -8,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderItemDao {
     private Connection conn;
@@ -46,7 +49,6 @@ public class OrderItemDao {
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, idOrderItem);
-            System.out.println(orderItem.getIdOrder());
             pstmt.setString(2, orderItem.getIdOrder());
             pstmt.setInt(3, orderItem.getCnOrderItem());
             pstmt.setString(4, orderItem.getNoProduct());
@@ -63,6 +65,37 @@ public class OrderItemDao {
         } catch (SQLException e) {
             e.printStackTrace(); // 디버깅을 위해 예외 출력
             throw new MemberException(ErrorType.DB_QUERY_FAIL);
+        }
+    }
+
+    public List<GetOrderItemDto> getOrderItemList(String idOrder) {
+        String sqlQuery = "select o.*,p.nm_product,p.qt_customer,p.qt_delivery_fee,p.id_file from tb_order_item o\n" +
+                "join tb_product p on o.no_product = p.no_product\n" +
+                "where o.id_order = ? order by cn_order_item asc";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setString(1, idOrder);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            List<GetOrderItemDto> getOrderItemDtoList = new ArrayList<>();
+            while(rs.next()){
+                GetOrderItemDto orderItem = new GetOrderItemDto();
+                orderItem.setNoProduct(rs.getInt("NO_PRODUCT"));
+                orderItem.setQtUnitPrice(rs.getInt("QT_UNIT_PRICE"));
+                orderItem.setQtOrderItem(rs.getInt("QT_ORDER_ITEM"));
+                orderItem.setQtOrderItemAmount(rs.getInt("QT_ORDER_ITEM_AMOUNT"));
+                orderItem.setQtOrderItemDelivery(rs.getInt("QT_ORDER_ITEM_DELIVERY_FEE"));
+                orderItem.setNmProduct(rs.getString("NM_PRODUCT"));
+                orderItem.setIdFile(rs.getString("ID_FILE"));
+
+
+                getOrderItemDtoList.add(orderItem);
+            }
+            return getOrderItemDtoList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

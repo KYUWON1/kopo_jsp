@@ -5,15 +5,15 @@ import com.kopo.web_final.order.dao.OrderDao;
 import com.kopo.web_final.order.dao.OrderItemDao;
 import com.kopo.web_final.order.model.Order;
 import com.kopo.web_final.order.model.OrderItem;
+import com.kopo.web_final.product.dao.ProductDao;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.sql.Connection;
 import java.time.LocalDate;
-import java.util.UUID;
 
-public class OrderInsertCommand implements Command {
+public class SubmitProductOrderCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setCharacterEncoding("UTF-8");
@@ -43,7 +43,6 @@ public class OrderInsertCommand implements Command {
         LocalDate now = LocalDate.now();
 
         Connection conn = null;
-
         try {
             conn = Db.getConnection();
             conn.setAutoCommit(false);
@@ -95,6 +94,15 @@ public class OrderInsertCommand implements Command {
             if (orderItemResult < 1) {
                 conn.rollback();
                 request.setAttribute("message", "주문 품목 등록에 실패했습니다.");
+                request.setAttribute("type", "error");
+                return "productDetail.do?productId=" + noProduct;
+            }
+
+            ProductDao productDao = new ProductDao(conn);
+            int productResult = productDao.decreaseStock(noProduct, qtOrderItem);
+            if (productResult < 1) {
+                conn.rollback();
+                request.setAttribute("message", "재고 감소에 실패했습니다.");
                 request.setAttribute("type", "error");
                 return "productDetail.do?productId=" + noProduct;
             }

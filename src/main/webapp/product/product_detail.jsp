@@ -135,6 +135,7 @@
 %>
 
 <%-- 메시지가 존재하면 표시 --%>
+
 <% if (message != null && !message.isEmpty()) { %>
 <div style="max-width: 800px; margin: 80px auto 20px; padding: 15px; border-radius: 6px;
         font-weight: bold; font-size: 16px;
@@ -186,6 +187,5 @@
         </form>
     </div>
 </div>
-
 
 <%@ include file="/common/simple_footer.jsp" %>

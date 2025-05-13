@@ -46,11 +46,8 @@ public class InsertOrGetBasketCommand implements Command {
 
             // 장바구니 목록 불러오기
             BasketItemDao basketItemDao = new BasketItemDao(conn);
-            System.out.println("장바구니 목록 불러오기 nb_basket: " + basketId );
             List<BasketItemDto> basketList = basketItemDao.getBasketList(basketId);
-            for(BasketItemDto dto : basketList){
-                System.out.println(dto.getNoProduct());
-            }
+
             req.setAttribute("basketTable",basketDto);
             req.setAttribute("basketList",basketList);
             return "/basket/basket_management.jsp";

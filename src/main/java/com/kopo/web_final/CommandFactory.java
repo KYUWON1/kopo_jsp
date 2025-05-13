@@ -1,12 +1,9 @@
 package com.kopo.web_final;
 
-import com.kopo.web_final.basket.command.DeleteBasketItemCommand;
-import com.kopo.web_final.basket.command.InsertBasketItemCommand;
-import com.kopo.web_final.basket.command.InsertOrGetBasketCommand;
+import com.kopo.web_final.basket.command.*;
 import com.kopo.web_final.category.command.*;
 import com.kopo.web_final.member.command.*;
-import com.kopo.web_final.order.command.OrderInsertCommand;
-import com.kopo.web_final.order.command.ProductOrderFormCommand;
+import com.kopo.web_final.order.command.*;
 import com.kopo.web_final.product.command.admin.GetProductManagementListCommand;
 import com.kopo.web_final.product.command.admin.ProductDeleteCommand;
 import com.kopo.web_final.product.command.admin.ProductInsertCommand;
@@ -21,10 +18,15 @@ public class CommandFactory {
             case "getImage" -> new GetProductImageCommand();
             case "productDetail" -> new GetProductDetailCommand();
             case "productOrderForm" -> new ProductOrderFormCommand();
-            case "submitOrder" -> new OrderInsertCommand();
+            case "submitOrder" -> new SubmitProductOrderCommand();
+            case "submitBasket" -> new BasketOrderFormCommand();
+            case "submitBasketOrder" -> new SubmitBasketOrderCommand();
             case "getBasket" -> new InsertOrGetBasketCommand();
+            case "getOrder" -> new GetOrderCommand();
+            case "getOrderDetail" -> new GetOrderDetailCommand();
             case "insertBasketItem" -> new InsertBasketItemCommand();
             case "deleteBasketItem" -> new DeleteBasketItemCommand();
+            case "emptyBasket" -> new EmptyBasketCommand();
             case "memberJoin" -> new MemberJoinCommand();
             case "memberLeave" -> new MemberLeaveCommand();
             case "memberInfoAuth" -> new MemberInfoAuthCommand();

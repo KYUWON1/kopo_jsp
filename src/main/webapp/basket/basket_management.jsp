@@ -124,15 +124,38 @@
   .btn-purchase:hover {
     background-color: #388e3c;
   }
+
+  .btn-clear {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .btn-clear:hover {
+    background-color: #f57c00;
+  }
 </style>
 
 <%@ include file="/common/header.jsp" %>
 
 <div class="basket-container">
-  <h2>장바구니</h2>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>장바구니</h2>
+    <% if (basketItems != null && !basketItems.isEmpty()) { %>
+    <form method="post" action="emptyBasket.do" style="margin: 0;">
+      <input type="hidden" name="nbBasket" value="<%= basket.getNbBasket() %>">
+      <button type="submit" class="btn-clear">장바구니 비우기</button>
+    </form>
+    <% } %>
+  </div>
 
   <% if (basketItems != null && !basketItems.isEmpty()) { %>
-  <form method="post" action="basketOrder.do">
+  <form method="post" action="submitBasket.do">
+    <input type="hidden" name="nbBasket" value="<%= basket.getNbBasket() %>">
     <%
       int totalAmount = 0;
       for (BasketItemDto item : basketItems) {
@@ -145,8 +168,8 @@
         <p>단가: <%= item.getQtBasketItemPrice() %>원</p>
         <div class="inline-form">
           <span>수량:</span>
-          <input type="hidden" name="nbBasketItem" value="<%= item.getNbBasketItem() %>">
-          <input type="number" name="quantity" class="quantity-input" value="<%= item.getQtBasketItem() %>" min="1" data-price="<%= item.getQtBasketItemPrice() %>">
+          <input type="hidden" name="noProduct" value="<%= item.getNoProduct() %>">
+          <input type="number" name="quantity" class="quantity-input" value="<%= item.getQtBasketItem() %>" min="1" max="<%= item.getQtStock() %>" data-price="<%= item.getQtBasketItemPrice() %>">
         </div>
         <p>금액: <span class="item-amount"><%= item.getQtBasketItemAmount() %></span>원</p>
       </div>

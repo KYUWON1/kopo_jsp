@@ -96,4 +96,15 @@ public class BasketItemDao {
             throw new RuntimeException(e);
         }
     }
+
+    public int deleteBasketItemByBasketId(int nbBasket) {
+        String deleteSql = "DELETE TB_BASKET_ITEM WHERE NB_BASKET = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(deleteSql)) {
+            pstmt.setInt(1, nbBasket);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

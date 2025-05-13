@@ -11,6 +11,7 @@
 
   int quantity = quantityStr != null ? Integer.parseInt(quantityStr) : 0;
   int buyPrice = buyPriceStr != null ? Integer.parseInt(buyPriceStr) : 0;
+  int deliVeryFee = deliveryPrice != null ? Integer.parseInt(deliveryPrice) : 0;
   int totalAmount = quantity * buyPrice;
 %>
 
@@ -153,7 +154,7 @@
       <h3>결제 정보</h3>
       <p>상품 가격: <strong><%= String.format("%,d원", buyPrice) %></strong></p>
       <p>주문 수량: <strong><%= quantity %>개</strong></p>
-      <p>배송비: <strong>3,000원</strong></p>
+      <p>배송비: <strong><%= deliVeryFee %>원</strong></p>
       <p>총 결제 금액: <strong><%= String.format("%,d원", totalAmount + 3000) %></strong></p>
     </div>
 

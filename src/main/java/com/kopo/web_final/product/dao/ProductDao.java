@@ -1,5 +1,6 @@
 package com.kopo.web_final.product.dao;
 
+import com.kopo.web_final.basket.dto.ProductItemDto;
 import com.kopo.web_final.exception.MemberException;
 import com.kopo.web_final.product.dto.ProductDisplayDto;
 import com.kopo.web_final.product.model.Product;
@@ -291,6 +292,81 @@ public class ProductDao {
             e.printStackTrace();
             throw new MemberException(ErrorType.DB_QUERY_FAIL);
         }
+    }
+    public List<ProductItemDto> getProductListByBasketIdList(String[] productIds) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM TB_PRODUCT WHERE NO_PRODUCT IN (");
+        for (int i = 0; i < productIds.length; i++) {
+            sql.append("?");
+            if (i < productIds.length - 1) sql.append(",");
+        }
+        sql.append(") ORDER BY DECODE(NO_PRODUCT, ");
+        for (int i = 0; i < productIds.length; i++) {
+            sql.append("? , ").append(i + 1);
+            if (i < productIds.length - 1) sql.append(", ");
+        }
+        sql.append(")");
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            // 바인딩: IN절 + DECODE절
+            int idx = 1;
+            for (String id : productIds) {
+                pstmt.setString(idx++, id);
+            }
+            for (String id : productIds) {
+                pstmt.setString(idx++, id);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            List<ProductItemDto> productItemList = new ArrayList<>();
+            while (rs.next()) {
+                // Process each product
+                ProductItemDto productItemDto = new ProductItemDto();
+                productItemDto.setNoProduct(rs.getInt("NO_PRODUCT"));
+                productItemDto.setNmProduct(rs.getString("NM_PRODUCT"));
+                productItemDto.setQtCustomer(rs.getInt("QT_CUSTOMER"));
+                productItemDto.setQtDeliveryFee(rs.getInt("QT_DELIVERY_FEE"));
+                productItemDto.setIdFile(rs.getString("ID_FILE"));
+
+                productItemList.add(productItemDto);
+            }
+            return productItemList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public int[] decreaseStocks(String[] productIds, String[] quantities) {
+        String sql = "UPDATE tb_product SET qt_stock = qt_stock - ? WHERE no_product = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            for (int i = 0; i < productIds.length; i++) {
+                int quantity = Integer.parseInt(quantities[i]);
+                String productId = productIds[i];
+
+                pstmt.setInt(1, quantity);
+                pstmt.setString(2, productId);
+
+                pstmt.addBatch(); // batch 처리
+            }
+
+            return pstmt.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int decreaseStock(String productId, int quantity) {
+        String sql = "UPDATE tb_product SET qt_stock = qt_stock - ? WHERE no_product = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, quantity);
+            pstmt.setString(2, productId);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private Date toSqlDate(LocalDate localDate) {

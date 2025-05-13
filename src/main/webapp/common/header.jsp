@@ -105,7 +105,9 @@
     </style>
     <!-- 페이지별 추가 스타일은 헤더 포함 전에 정의 -->
 </head>
-<body>
+
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+<div class="layout" style="flex: 1;">
 <!-- 헤더 영역 -->
 <header>
     <div class="header-container">
@@ -132,6 +134,7 @@
             <a href="/member/logout.jsp">로그아웃</a>
             <% } else { %>
             <a href="getBasket.do">장바구니</a>
+            <a href="getOrder.do">주문목록</a>
             <a href="/member/info_auth.jsp">개인정보</a>
             <a href="/member/leave.jsp">회원탈퇴</a>
             <a href="/member/logout.jsp">로그아웃</a>

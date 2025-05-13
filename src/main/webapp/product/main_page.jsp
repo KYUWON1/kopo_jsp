@@ -103,6 +103,10 @@
     font-weight: bold;
   }
 
+  .product-card a {
+    text-decoration: none;
+    color: inherit;
+  }
   .product-price {
     color: #4caf50;
     font-weight: 600;
@@ -321,23 +325,22 @@
           Product p = dto.getProduct();
         %>
         <div class="product-card">
-
-          <div class="product-img">
-            <a href="productDetail.do?productId=<%= p.getNoProduct() %>">
-              <img src="getImage.do?id=<%= p.getIdFile() %>" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
-            </a>
-          </div>
-          <div class="product-info">
-            <div class="product-title"><%= p.getNmProduct() %></div>
-            <div class="product-original-price">
-              <%= String.format("%,d원", p.getQtSalePrice()) %>
+          <a href="productDetail.do?productId=<%= p.getNoProduct() %>" style="text-decoration: none; color: inherit; display: block;">
+            <div class="product-img">
+              <!-- 상품 이미지 getImage.do?id=<%= p.getIdFile() %> -->
+              <img src="" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
             </div>
-            <div class="product-discount-price">
-              <%= String.format("%,d원", p.getQtCustomer()) %>
+            <div class="product-info">
+              <div class="product-title"><%= p.getNmProduct() %></div>
+              <div class="product-original-price">
+                <%= String.format("%,d원", p.getQtSalePrice()) %>
+              </div>
+              <div class="product-discount-price">
+                <%= String.format("%,d원", p.getQtCustomer()) %>
+              </div>
+              <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">카테고리: <%= dto.getCategoryName() %></div>
             </div>
-            <div class="product-desc" style="font-size: 14px; color: #777; margin-top: 8px;"><%= p.getNmDetailExplain() %></div>
-            <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">카테고리: <%= dto.getCategoryName() %></div>
-          </div>
+          </a>
         </div>
         <% } %>
       </div>
