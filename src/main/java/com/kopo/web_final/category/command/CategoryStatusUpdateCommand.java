@@ -27,7 +27,8 @@ public class CategoryStatusUpdateCommand implements Command {
             req.setAttribute("message","StatusUpdateSuccess");
             req.setAttribute("type","success");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "categoryManagement.do";
         }
         return "categoryManagement.do";
     }

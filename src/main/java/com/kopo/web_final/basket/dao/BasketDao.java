@@ -14,7 +14,7 @@ public class BasketDao {
         this.conn = conn;
     }
 
-    public BasketDto getBasket(String idUser) {
+    public BasketDto getBasket(String idUser) throws SQLException {
         String sql = "SELECT NB_BASKET, NO_USER, QT_BASKET_AMOUNT FROM TB_BASKET WHERE NO_USER = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, idUser);
@@ -32,11 +32,11 @@ public class BasketDao {
             return basketDto;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
-    public int createBasket(String idUser) {
+    public int createBasket(String idUser) throws SQLException {
         String sql = "SELECT SEQ_TB_BASKET_ID.NEXTVAL FROM DUAL";
 
         int seqVal = 0;
@@ -47,7 +47,7 @@ public class BasketDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
 
         String sqlQuery = "INSERT INTO TB_BASKET (NB_BASKET, NO_USER,QT_BASKET_AMOUNT) VALUES (? ,? ,?)";
@@ -65,11 +65,11 @@ public class BasketDao {
             return seqVal;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
-    public int getBasketId(String idUser) {
+    public int getBasketId(String idUser) throws SQLException {
         String sql = "SELECT NB_BASKET FROM TB_BASKET WHERE NO_USER = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, idUser);
@@ -84,7 +84,7 @@ public class BasketDao {
             return -1;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 }

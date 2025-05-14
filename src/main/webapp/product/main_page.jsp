@@ -318,7 +318,7 @@
       </ul>
     </div>
     <div class="featured-section">
-      <h2>추천 상품</h2>
+      <h2>상품 목록</h2>
 
       <div class="product-grid">
         <% for (ProductDisplayDto dto : productListWithCategory) {

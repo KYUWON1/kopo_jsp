@@ -24,6 +24,10 @@ public class EmptyBasketCommand implements Command {
             }
 
             req.setAttribute("message", "장바구니 비우기 성공");
+        }catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("message", "장바구니 비우기 실패");
+            return "getBasket.do";
         }
 
         return "getBasket.do";

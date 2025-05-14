@@ -19,7 +19,7 @@ public class OrderDao {
         this.conn = conn;
     }
 
-    public String insertOrder(Order order) throws MemberException {
+    public String insertOrder(Order order) throws SQLException {
         String idOrder = null;
 
         try (PreparedStatement pstmt = conn.prepareStatement("SELECT SEQ_TB_ORDER_ID.NEXTVAL FROM DUAL");
@@ -32,7 +32,7 @@ public class OrderDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("주문 ID 생성 중 오류 발생");
+            throw e;
         }
 
         String sql = "INSERT INTO TB_ORDER (\n" +
@@ -79,12 +79,12 @@ public class OrderDao {
             System.out.println(idOrder);
             return idOrder;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public List<GetOrderDto> getOrder(String idUser) {
+    public List<GetOrderDto> getOrder(String idUser) throws SQLException {
         String sqlQuery = "SELECT * FROM TB_ORDER WHERE NO_USER = ? ";
         try(PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.setString(1, idUser);
@@ -116,7 +116,7 @@ public class OrderDao {
             return ordetList;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 }

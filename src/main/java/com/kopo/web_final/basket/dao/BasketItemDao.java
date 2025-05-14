@@ -17,7 +17,7 @@ public class BasketItemDao {
         this.conn = conn;
     }
 
-    public List<BasketItemDto> getBasketList(int basketId) {
+    public List<BasketItemDto> getBasketList(int basketId) throws SQLException {
         String sql = "SELECT \n" +
                 "    c.NB_BASKET_ITEM, \n" +
                 "    c.CN_BASKET_ITEM_ORDER, \n" +
@@ -57,11 +57,12 @@ public class BasketItemDao {
 
             return basketItemDtoList;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public int insertBasketItem(BasketItem basketItem) {
+    public int insertBasketItem(BasketItem basketItem) throws SQLException {
         String sql = "INSERT INTO TB_BASKET_ITEM (" +
                 "NB_BASKET_ITEM, NB_BASKET, CN_BASKET_ITEM_ORDER, NO_PRODUCT, NO_USER, " +
                 "QT_BASKET_ITEM_PRICE, QT_BASKET_ITEM, QT_BASKET_ITEM_AMOUNT, " +
@@ -82,29 +83,31 @@ public class BasketItemDao {
             return pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("장바구니 항목 등록 실패", e);
+            throw e;
         }
     }
 
-    public int deleteBasketItem(String nbBasketItem) {
+    public int deleteBasketItem(String nbBasketItem) throws SQLException {
         String deleteSql = "DELETE TB_BASKET_ITEM WHERE NB_BASKET_ITEM = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(deleteSql)) {
             pstmt.setString(1, nbBasketItem);
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public int deleteBasketItemByBasketId(int nbBasket) {
+    public int deleteBasketItemByBasketId(int nbBasket) throws SQLException {
         String deleteSql = "DELETE TB_BASKET_ITEM WHERE NB_BASKET = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(deleteSql)) {
             pstmt.setInt(1, nbBasket);
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw e;
         }
     }
 }

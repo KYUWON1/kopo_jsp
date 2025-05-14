@@ -80,7 +80,7 @@ public class MemberPasswordUpdateCommand implements Command {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            res.sendRedirect("/error/500.jsp");
+            return "/error/500.jsp";
         }
 
         return "/member/info.jsp";

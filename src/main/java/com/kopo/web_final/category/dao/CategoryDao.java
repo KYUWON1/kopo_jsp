@@ -20,7 +20,7 @@ public class CategoryDao {
         this.conn = conn;
     }
 
-    public List<Category> getCategoryList() throws MemberException {
+    public List<Category> getCategoryList() throws SQLException {
         String sql = "SELECT\n" +
                 "    NB_CATEGORY,\n" +
                 "    NB_PARENT_CATEGORY,\n" +
@@ -42,11 +42,12 @@ public class CategoryDao {
             }
             return categoryList;
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public int insertCategory(Category category) throws MemberException {
+    public int insertCategory(Category category) throws SQLException {
         String insertSql = "INSERT INTO TB_CATEGORY (\n" +
                 "    NB_CATEGORY,\n" +
                 "    NB_PARENT_CATEGORY,\n" +
@@ -76,12 +77,13 @@ public class CategoryDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
 
     }
 
-    public int updateCategory(String noCategory, Category category) throws MemberException {
+    public int updateCategory(String noCategory, Category category) throws SQLException {
         String sql = "UPDATE TB_CATEGORY SET\n" +
                 "    NB_PARENT_CATEGORY = ?,\n" +
                 "    NM_CATEGORY = ?,\n" +
@@ -103,11 +105,12 @@ public class CategoryDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public int updateUseStatusActive(String nbCategory, String ynUse) throws MemberException {
+    public int updateUseStatusActive(String nbCategory, String ynUse) throws SQLException {
         String sql = "UPDATE TB_CATEGORY SET YN_USE = ? WHERE NB_CATEGORY = ?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -116,11 +119,12 @@ public class CategoryDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public int updateUseStatusInActive(String nbCategory, String ynUse) throws MemberException {
+    public int updateUseStatusInActive(String nbCategory, String ynUse) throws SQLException {
         String sql = "UPDATE TB_CATEGORY set YN_USE = ? \n" +
                 "WHERE NB_CATEGORY = ? OR NB_PARENT_CATEGORY IN (\n" +
                 "    SELECT NB_CATEGORY FROM TB_CATEGORY \n" +
@@ -136,11 +140,11 @@ public class CategoryDao {
             return pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            throw e;
         }
     }
 
-    public int updateDeleteAndUseStatusFlush(String nbCategory) throws MemberException {
+    public int updateDeleteAndUseStatusFlush(String nbCategory) throws SQLException {
         String updateSql = "UPDATE TB_CATEGORY\n" +
                 "SET \n" +
                 "    YN_USE = 'N',\n" +
@@ -166,10 +170,7 @@ public class CategoryDao {
             return pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("카테고리 삭제 중 예외 발생", e);
+            throw e;
         }
     }
 

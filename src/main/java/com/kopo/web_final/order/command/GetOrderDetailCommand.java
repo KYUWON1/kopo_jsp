@@ -30,8 +30,11 @@ public class GetOrderDetailCommand implements Command {
             OrderItemDao orderItemDao = new OrderItemDao(conn);
             List<GetOrderItemDto> orderItemList = orderItemDao.getOrderItemList(idOrder);
 
-
             req.setAttribute("orderItemList",orderItemList);
+        }catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("message", "주문 상세 정보를 불러오는 중 오류가 발생했습니다.");
+            return "/order/order_management.jsp";
         }
         req.setAttribute("idOrder", idOrder);
         req.setAttribute("totalPrice", totalPrice);

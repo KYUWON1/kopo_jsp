@@ -45,7 +45,7 @@ public class ProductOrderFormCommand implements Command {
         }else if(action.equals("order")){
             return "/order/order_form.jsp";
         }else{
-            return null;
+            return "404.do";
         }
     }
 }

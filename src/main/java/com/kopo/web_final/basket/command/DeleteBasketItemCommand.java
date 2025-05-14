@@ -22,7 +22,12 @@ public class DeleteBasketItemCommand implements Command {
                 req.setAttribute("message", "장바구니 삭제에 실패했습니다.");
                 return "getBasket.do";
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("message", "장바구니 삭제 중 오류가 발생했습니다.");
+            return "getBasket.do";
         }
+
         req.setAttribute("message","장바구니 삭제 성공");
         return "getBasket.do";
     }

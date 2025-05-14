@@ -67,6 +67,7 @@ public class MemberStatusUpdateCommand implements Command {
             e.printStackTrace();
             req.setAttribute("message", "오류가 발생했습니다: " + e.getMessage());
             req.setAttribute("type", "error");
+            return "memberManagement.do?status=active";
         }
 
         return "memberManagement.do?status=active"; // 실제 뷰 파일 경로에 맞춰 조정

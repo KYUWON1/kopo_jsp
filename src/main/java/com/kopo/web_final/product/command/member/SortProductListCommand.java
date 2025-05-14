@@ -37,7 +37,7 @@ public class SortProductListCommand implements Command {
             req.setAttribute("categoryList", categoryList);
         } catch (Exception e) {
             e.printStackTrace();
-            return "/500.do";
+            return "/error/500.jsp";
         }
 
         return "/product/main_page.jsp";

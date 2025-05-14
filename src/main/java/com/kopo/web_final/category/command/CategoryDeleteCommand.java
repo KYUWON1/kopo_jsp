@@ -26,7 +26,8 @@ public class CategoryDeleteCommand implements Command {
             req.setAttribute("message","DeleteSuccess");
             req.setAttribute("type","success");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "categoryManagement.do";
         }
 
         return "categoryManagement.do";

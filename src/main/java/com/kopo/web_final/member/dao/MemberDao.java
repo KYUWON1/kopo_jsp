@@ -22,7 +22,7 @@ public class MemberDao{
         this.conn = conn;
     }
 
-    public int insertMember(Member member) throws MemberException {
+    public int insertMember(Member member) throws SQLException {
         String sql = "INSERT INTO tb_user (id_user, nm_user, nm_paswd, nm_enc_paswd, no_mobile, nm_email, st_status, cd_user_type, no_register, da_first_date)"
                 +" VALUES (" +
                 " 'U_' || LPAD(seq_tb_user_id.NEXTVAL,6,'0'), ?, ?, ?, ?, ?, ?, ?, ?, ?" +
@@ -41,12 +41,13 @@ public class MemberDao{
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
 
     }
 
-    public int updateMember(String idUser,Member member) throws MemberException {
+    public int updateMember(String idUser,Member member) throws SQLException {
         String sql = "update tb_user " +
                 "set " +
                 "nm_email = ?, " +
@@ -62,12 +63,13 @@ public class MemberDao{
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
 
     }
 
-    public int updateMemberPassword(String idUser,Member member) throws MemberException {
+    public int updateMemberPassword(String idUser,Member member) throws SQLException {
         String sql = "update tb_user " +
                 "set " +
                 "nm_paswd = ?, " +
@@ -81,12 +83,13 @@ public class MemberDao{
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
 
     }
 
-    public int checkEmailExist(String email) throws MemberException {
+    public int checkEmailExist(String email) throws SQLException {
         String sql = "select COUNT(*) from tb_user" +
                 " WHERE nm_email = ?";
         
@@ -101,11 +104,12 @@ public class MemberDao{
 
             return 0;
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public Member findByEmail(String email) throws MemberException {
+    public Member findByEmail(String email) throws SQLException {
         String sql = "select * FROM tb_user where nm_email = ?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -118,11 +122,12 @@ public class MemberDao{
             }
             return null;
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public List<Member> getActiveMemberList(UserStatus status) throws MemberException {
+    public List<Member> getActiveMemberList(UserStatus status) throws SQLException {
         String sql = "select * from tb_user where st_status = ?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -136,11 +141,11 @@ public class MemberDao{
             return memberList;
         }catch(SQLException e){
             e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            throw e;
         }
     }
 
-    public int updateStatusInit(String adminId, String idUser, UserStatus userStatus) throws MemberException {
+    public int updateStatusInit(String adminId, String idUser, UserStatus userStatus) throws SQLException {
         String sql = "UPDATE tb_user " +
                 " SET st_status = ?, no_register = ?, da_first_date = ?  " +
                 " WHERE id_user = ? ";
@@ -153,11 +158,11 @@ public class MemberDao{
             return pstmt.executeUpdate();
         }catch(SQLException e){
             e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            throw e;
         }
     }
 
-    public int updateStatus(String idUser, UserStatus userStatus) throws MemberException {
+    public int updateStatus(String idUser, UserStatus userStatus) throws SQLException {
         String sql = "UPDATE tb_user " +
                 " SET st_status = ? " +
                 " WHERE id_user = ? ";
@@ -168,11 +173,11 @@ public class MemberDao{
             return pstmt.executeUpdate();
         }catch(SQLException e){
             e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            throw e;
         }
     }
 
-    public int updateMemberAuth(String targetId, Member member) throws MemberException {
+    public int updateMemberAuth(String targetId, Member member) throws SQLException {
         String sql = "UPDATE tb_user " +
                 " SET st_status = ?, cd_user_type = ? " +
                 " WHERE id_user = ? ";
@@ -186,11 +191,11 @@ public class MemberDao{
 
         }catch(SQLException e){
             e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            throw e;
         }
     }
 
-    public Member findById(String id) throws MemberException {
+    public Member findById(String id) throws SQLException {
         String query = "SELECT * FROM tb_user WHERE id_user = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -202,7 +207,8 @@ public class MemberDao{
                 }
             }
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
 
         return null;

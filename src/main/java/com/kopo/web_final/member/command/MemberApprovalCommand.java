@@ -54,6 +54,7 @@ public class MemberApprovalCommand implements Command {
             req.setAttribute("message", "예외 발생: " + e.getMessage());
             req.setAttribute("type", "error");
             e.printStackTrace();
+            return "memberManagement.do?" + pageStatus;
         }
 
         // forward할 대상 JSP

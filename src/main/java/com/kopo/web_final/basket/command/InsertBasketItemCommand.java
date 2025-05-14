@@ -54,6 +54,10 @@ public class InsertBasketItemCommand implements Command {
                 return "getBasket.do";
             }
             req.setAttribute("message","장바구니 추가에 성공했습니다.");
+        }catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("message", "장바구니 추가에 실패했습니다.");
+            return "getBasket.do";
         }
 
         return "getBasket.do";

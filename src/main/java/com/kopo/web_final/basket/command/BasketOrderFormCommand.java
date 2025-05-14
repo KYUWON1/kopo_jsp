@@ -54,7 +54,7 @@ public class BasketOrderFormCommand implements Command {
             req.setAttribute("totalDeliveryPrice", totalDeliveryPrice);
         }catch (Exception e) {
             e.printStackTrace();
-            return "500.do";
+            return "/error/500.jsp";
         }
 
         return "/basket/basket_order_form.jsp";

@@ -59,7 +59,8 @@ public class MemberInfoUpdateCommand implements Command {
                 req.setAttribute("type", "error");
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "/error/500.jsp";
         }
         return "/member/info.jsp";
     }

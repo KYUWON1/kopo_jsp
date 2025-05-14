@@ -14,7 +14,8 @@ public class Db {
             Context envContext = (Context) initContext.lookup("java:/comp/env");
             ds = (DataSource) envContext.lookup("jdbc/OracleDB");
         } catch (Exception e) {
-            e.printStackTrace();
+            // 예외를 RuntimeException으로 감싸서 던지면 예외 전파됨 (선택)
+            throw new RuntimeException("DB 초기화 실패", e);
         }
     }
 

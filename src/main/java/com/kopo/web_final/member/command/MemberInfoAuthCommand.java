@@ -31,10 +31,9 @@ public class MemberInfoAuthCommand implements Command {
                 return "/member/info_auth.jsp";
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "/error/500.jsp";
         }
 
         return "/member/info.jsp?auth=success";

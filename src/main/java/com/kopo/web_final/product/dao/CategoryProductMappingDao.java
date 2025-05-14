@@ -17,7 +17,7 @@ public class CategoryProductMappingDao {
         this.conn = conn;
     }
 
-    public int insertCpMapping(CategoryProductMapping categoryProductMapping) throws MemberException {
+    public int insertCpMapping(CategoryProductMapping categoryProductMapping) throws SQLException {
         String insertSql = "INSERT INTO tb_category_product_mapping (nb_category,no_product,cn_order,no_register,da_first_date) " +
                 "VALUES (?,?,?,?,?)";
         try(PreparedStatement pstmt = conn.prepareStatement(insertSql)){
@@ -29,12 +29,12 @@ public class CategoryProductMappingDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public int updateCpMapping(String productId, int categoryID) throws MemberException {
+    public int updateCpMapping(String productId, int categoryID) throws SQLException {
         String updateSql = "UPDATE TB_CATEGORY_PRODUCT_MAPPING SET NB_CATEGORY = ? WHERE NO_PRODUCT = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
             pstmt.setInt(1, categoryID);
@@ -42,20 +42,20 @@ public class CategoryProductMappingDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public int deleteCpMapping(String noProduct) throws MemberException {
+    public int deleteCpMapping(String noProduct) throws SQLException {
         String deleteSql = "DELETE FROM TB_CATEGORY_PRODUCT_MAPPING WHERE NO_PRODUCT = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(deleteSql)) {
             pstmt.setString(1, noProduct);
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 

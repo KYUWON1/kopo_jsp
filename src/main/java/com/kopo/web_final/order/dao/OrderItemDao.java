@@ -19,7 +19,7 @@ public class OrderItemDao {
         this.conn = conn;
     }
 
-    public int insertOrderItem(OrderItem orderItem) throws MemberException {
+    public int insertOrderItem(OrderItem orderItem) throws SQLException {
         String idOrderItem = null;
         try(PreparedStatement pstmt = conn.prepareStatement("SELECT SEQ_TB_ORDER_ITEM_ID.NEXTVAL FROM DUAL")){
             ResultSet rs = pstmt.executeQuery();
@@ -30,7 +30,7 @@ public class OrderItemDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
 
         String sql = "INSERT INTO TB_ORDER_ITEM (\n" +
@@ -63,12 +63,12 @@ public class OrderItemDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public List<GetOrderItemDto> getOrderItemList(String idOrder) {
+    public List<GetOrderItemDto> getOrderItemList(String idOrder) throws SQLException {
         String sqlQuery = "select o.*,p.nm_product,p.qt_customer,p.qt_delivery_fee,p.id_file from tb_order_item o\n" +
                 "join tb_product p on o.no_product = p.no_product\n" +
                 "where o.id_order = ? order by cn_order_item asc";
@@ -95,7 +95,7 @@ public class OrderItemDao {
             return getOrderItemDtoList;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 }

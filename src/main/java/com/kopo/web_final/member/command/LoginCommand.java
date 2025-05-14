@@ -48,7 +48,8 @@ public class LoginCommand implements Command {
             req.setAttribute("userName",member.getNmUser());
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "/error/500.jsp";
         }
 
         return "/member/login_success.jsp";

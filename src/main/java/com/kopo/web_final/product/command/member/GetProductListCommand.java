@@ -41,7 +41,7 @@ public class GetProductListCommand implements Command {
             req.setAttribute("productListWithCategory", productListWithCategory);
         } catch (Exception e) {
             e.printStackTrace();
-            return "/500.do";
+            return "/error/500.jsp";
         }
         return "/product/main_page.jsp";
     }

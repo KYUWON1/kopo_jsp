@@ -40,7 +40,7 @@ public class MemberJoinCommand implements Command {
             req.setAttribute("userName", req.getParameter("userName"));
           } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            return "/error/500.jsp";
         }
 
         return "/member/signup_success.jsp";

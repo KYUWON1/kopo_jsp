@@ -42,7 +42,8 @@ public class MemberLeaveCommand implements Command {
             // 메인으로 리다이렉트
             req.setAttribute("leave", "success");
         }catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "main.do";
         }
 
         return "main.do";

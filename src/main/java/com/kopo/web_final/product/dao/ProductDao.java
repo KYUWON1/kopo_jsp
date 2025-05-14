@@ -18,7 +18,7 @@ public class ProductDao {
         this.conn = conn;
     }
 
-    public List<ProductDisplayDto> getAllProductListWithCategory() throws MemberException {
+    public List<ProductDisplayDto> getAllProductListWithCategory() throws SQLException {
         String sql = "SELECT\n" +
                 "    p.NO_PRODUCT AS NO_PRODUCT,\n" +
                 "    p.NM_PRODUCT AS NM_PRODUCT,\n" +
@@ -62,12 +62,12 @@ public class ProductDao {
             }
             return productDtoList;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public List<ProductDisplayDto> getProductListByCategoryId(String category) throws MemberException {
+    public List<ProductDisplayDto> getProductListByCategoryId(String category) throws SQLException {
         String sql = "SELECT\n" +
                 "    p.NO_PRODUCT AS NO_PRODUCT,\n" +
                 "    p.NM_PRODUCT AS NM_PRODUCT,\n" +
@@ -115,12 +115,12 @@ public class ProductDao {
             }
             return productDtoList;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public List<ProductDisplayDto> getFilteredProductList(int category, String keyword, String sort) throws MemberException {
+    public List<ProductDisplayDto> getFilteredProductList(int category, String keyword, String sort) throws SQLException {
         StringBuilder sql = new StringBuilder(
                 "SELECT\n" +
                         "    p.NO_PRODUCT AS NO_PRODUCT,\n" +
@@ -181,12 +181,12 @@ public class ProductDao {
             }
             return productDtoList;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public Product getProductDetailById(String productId) throws MemberException {
+    public Product getProductDetailById(String productId) throws SQLException {
         String sql = "SELECT * FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1,productId);
@@ -198,24 +198,22 @@ public class ProductDao {
             }
             return product;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
 
-    public String insertProduct(Product product) throws MemberException {
+    public String insertProduct(Product product) throws SQLException {
         String sequenceVal = null;
         try(Statement stmt = conn.createStatement()){
             ResultSet rs = stmt.executeQuery("SELECT SEQ_TB_PRODUCT_NO.NEXTVAL FROM DUAL");
             if(rs.next()){
                 sequenceVal = rs.getString(1);
-            } else {
-                throw new MemberException(ErrorType.DB_QUERY_FAIL);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
 
         String insertSql = "INSERT INTO TB_PRODUCT (" +
@@ -245,12 +243,12 @@ public class ProductDao {
                 return null;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public int updateProduct(String productId, Product product) throws MemberException {
+    public int updateProduct(String productId, Product product) throws SQLException {
         String updateSql = "UPDATE TB_PRODUCT SET " +
                 "NM_PRODUCT = ?, " +
                 "NM_DETAIL_EXPLAIN = ?, " +
@@ -278,7 +276,8 @@ public class ProductDao {
             return pstmt.executeUpdate();
             // 결과 처리
         } catch (SQLException e) {
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
@@ -293,7 +292,7 @@ public class ProductDao {
             throw new MemberException(ErrorType.DB_QUERY_FAIL);
         }
     }
-    public List<ProductItemDto> getProductListByBasketIdList(String[] productIds) {
+    public List<ProductItemDto> getProductListByBasketIdList(String[] productIds) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM TB_PRODUCT WHERE NO_PRODUCT IN (");
         for (int i = 0; i < productIds.length; i++) {
             sql.append("?");
@@ -331,13 +330,12 @@ public class ProductDao {
             }
             return productItemList;
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
-
-        return null;
     }
 
-    public int[] decreaseStocks(String[] productIds, String[] quantities) {
+    public int[] decreaseStocks(String[] productIds, String[] quantities) throws SQLException {
         String sql = "UPDATE tb_product SET qt_stock = qt_stock - ? WHERE no_product = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
             for (int i = 0; i < productIds.length; i++) {
@@ -352,11 +350,12 @@ public class ProductDao {
 
             return pstmt.executeBatch();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    public int decreaseStock(String productId, int quantity) {
+    public int decreaseStock(String productId, int quantity) throws SQLException {
         String sql = "UPDATE tb_product SET qt_stock = qt_stock - ? WHERE no_product = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
             pstmt.setInt(1, quantity);
@@ -364,7 +363,8 @@ public class ProductDao {
 
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
 
     }

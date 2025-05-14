@@ -15,8 +15,7 @@ public class ContentDao {
         this.conn = conn;
     }
 
-
-    public String insertContent(Content content) throws MemberException {
+    public String insertContent(Content content) throws SQLException {
         String contentId = null;
         try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT SEQ_TB_CONTENT_ID.NEXTVAL FROM DUAL");
@@ -25,8 +24,8 @@ public class ContentDao {
                 contentId = String.format("FILE_%06d", seq); // → FILE_000001
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace();
+            throw e;
         }
 
         String sql = "INSERT INTO TB_CONTENT (" +
@@ -48,16 +47,12 @@ public class ContentDao {
             else
                 return null;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
     }
 
-    private Date toSqlDate(LocalDate localDate) {
-        return localDate != null ? java.sql.Date.valueOf(localDate) : null;
-    }
-
-    public ImageDisplayDto getContentById(String id) throws MemberException {
+    public ImageDisplayDto getContentById(String id) throws SQLException {
         String sql = "SELECT BO_SAVE_FILE,CN_HIT FROM TB_CONTENT WHERE ID_FILE = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -72,9 +67,13 @@ public class ContentDao {
             }
             return imageDisplayDto;
         } catch (SQLException e) {
-            e.printStackTrace(); // 디버깅을 위해 예외 출력
-            throw new MemberException(ErrorType.DB_QUERY_FAIL);
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
         }
+    }
+
+    private Date toSqlDate(LocalDate localDate) {
+        return localDate != null ? java.sql.Date.valueOf(localDate) : null;
     }
 
 }

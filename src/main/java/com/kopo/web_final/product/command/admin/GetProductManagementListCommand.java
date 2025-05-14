@@ -29,7 +29,7 @@ public class GetProductManagementListCommand implements Command {
             req.setAttribute("productListWithCategory", productListWithCategory);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            return "/error/500.jsp";
         }
 
         return "/admin/product_management.jsp";

@@ -53,7 +53,7 @@ public class InsertOrGetBasketCommand implements Command {
             return "/basket/basket_management.jsp";
         }catch(Exception e){
             e.printStackTrace();
-            return "500.do";
+            return "/error/500.jsp";
         }
 
     }

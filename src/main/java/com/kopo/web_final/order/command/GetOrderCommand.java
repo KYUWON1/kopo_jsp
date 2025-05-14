@@ -29,6 +29,9 @@ public class GetOrderCommand implements Command {
             List<GetOrderDto> orderList = orderDao.getOrder(idUser);
 
             req.setAttribute("orderList",orderList);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "/error/500.jsp";
         }
 
         return "/order/order_management.jsp";

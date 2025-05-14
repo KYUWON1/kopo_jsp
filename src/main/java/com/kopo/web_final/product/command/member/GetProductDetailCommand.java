@@ -24,7 +24,7 @@ public class GetProductDetailCommand implements Command {
             req.setAttribute("productDetailById", productDetailById);
         }catch (Exception e) {
             e.printStackTrace();
-            return "/500.do";
+            return "/error/500.jsp";
         }
         return "/product/product_detail.jsp";
     }

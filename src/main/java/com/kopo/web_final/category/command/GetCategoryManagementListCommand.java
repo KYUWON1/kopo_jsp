@@ -25,7 +25,8 @@ public class GetCategoryManagementListCommand implements Command {
 
             req.setAttribute("categoryList", categoryList);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return "/admin/category_management.jsp";
         }
 
         return "/admin/category_management.jsp";
