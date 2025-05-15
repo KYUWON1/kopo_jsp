@@ -85,7 +85,7 @@ public class OrderDao {
     }
 
     public List<GetOrderDto> getOrder(String idUser) throws SQLException {
-        String sqlQuery = "SELECT * FROM TB_ORDER WHERE NO_USER = ? ";
+        String sqlQuery = "SELECT * FROM TB_ORDER WHERE NO_USER = ? ORDER BY DA_ORDER DESC ";
         try(PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.setString(1, idUser);
 

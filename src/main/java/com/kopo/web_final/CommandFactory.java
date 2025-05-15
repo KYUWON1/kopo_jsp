@@ -4,6 +4,7 @@ import com.kopo.web_final.basket.command.*;
 import com.kopo.web_final.category.command.*;
 import com.kopo.web_final.member.command.*;
 import com.kopo.web_final.order.command.*;
+import com.kopo.web_final.order.command.admin.GetOrderManagementCommand;
 import com.kopo.web_final.product.command.admin.GetProductManagementListCommand;
 import com.kopo.web_final.product.command.admin.ProductDeleteCommand;
 import com.kopo.web_final.product.command.admin.ProductInsertCommand;
@@ -13,10 +14,12 @@ import com.kopo.web_final.product.command.member.*;
 public class CommandFactory {
     public static Command getCommand(String action) {
         return switch (action) {
+            // 상품 메뉴
             case "main" -> new GetProductListCommand();
             case "productListSort" -> new SortProductListCommand();
             case "getImage" -> new GetProductImageCommand();
             case "productDetail" -> new GetProductDetailCommand();
+            // 상품 및 장바구니 관리 메뉴
             case "productOrderForm" -> new ProductOrderFormCommand();
             case "submitOrder" -> new SubmitProductOrderCommand();
             case "submitBasket" -> new BasketOrderFormCommand();
@@ -27,6 +30,7 @@ public class CommandFactory {
             case "insertBasketItem" -> new InsertBasketItemCommand();
             case "deleteBasketItem" -> new DeleteBasketItemCommand();
             case "emptyBasket" -> new EmptyBasketCommand();
+            // 회원관리 메뉴
             case "memberJoin" -> new MemberJoinCommand();
             case "memberLeave" -> new MemberLeaveCommand();
             case "memberInfoAuth" -> new MemberInfoAuthCommand();
@@ -36,6 +40,7 @@ public class CommandFactory {
             case "memberApproval" -> new MemberApprovalCommand();
             case "memberStatusUpdate" -> new MemberStatusUpdateCommand();
             case "login" -> new LoginCommand();
+            // 관리자 메뉴
             case "categoryInsert" -> new CateGoryInsertCommand();
             case "categoryUpdate" -> new CategoryUpdateCommand();
             case "categoryDelete" -> new CategoryDeleteCommand();
@@ -45,6 +50,8 @@ public class CommandFactory {
             case "productInsert" -> new ProductInsertCommand();
             case "productUpdate" -> new ProductUpdateCommand();
             case "productDelete" -> new ProductDeleteCommand();
+            case "orderManagement" -> new GetOrderManagementCommand();
+
             default -> null;
         };
     }

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -182,6 +183,18 @@
 <!-- 회원가입 폼 -->
 <div class="signup-container">
     <h2>회원가입</h2>
+
+    <%-- 에러 메시지 출력 --%>
+    <%
+        String error = (String) request.getAttribute("error");
+        if (error != null) {
+    %>
+    <div style="color: #f44336; font-size: 14px; margin-bottom: 15px; text-align: center;">
+        <%= error %>
+    </div>
+    <%
+        }
+    %>
     
     <form action="memberJoin.do" method="post" id="signupForm">
         <div class="form-group">
@@ -229,18 +242,26 @@
         var confirmPassword = document.getElementById("confirmPassword").value;
         var feedback = document.getElementById("passwordFeedback");
         var submitBtn = document.getElementById("submitBtn");
-        
-        // 피드백 요소 표시
+
         feedback.style.display = "block";
-        
-        // 비밀번호 확인 필드가 비어있으면 메시지 숨김
-        if (confirmPassword === "") {
-            feedback.textContent = "비밀번호를 입력해주세요.";
-            feedback.className = "password-feedback";
+
+        // 비밀번호 유효성: 대문자 1, 소문자 1, 숫자 1, 5~15자
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+
+        if (!passwordPattern.test(password)) {
+            feedback.textContent = "비밀번호는 대문자, 소문자, 숫자를 포함한 5~15자여야 합니다.";
+            feedback.className = "password-feedback invalid-feedback";
+            submitBtn.disabled = true;
             return;
         }
-        
-        // 비밀번호 일치 여부 확인
+
+        if (confirmPassword === "") {
+            feedback.textContent = "비밀번호 확인을 입력해주세요.";
+            feedback.className = "password-feedback";
+            submitBtn.disabled = true;
+            return;
+        }
+
         if (password === confirmPassword) {
             feedback.textContent = "비밀번호가 일치합니다.";
             feedback.className = "password-feedback valid-feedback";
@@ -251,18 +272,25 @@
             submitBtn.disabled = true;
         }
     }
-    
-    // 폼 제출 전 유효성 검사
+
     document.getElementById("signupForm").addEventListener("submit", function(event) {
         var password = document.getElementById("password").value;
         var confirmPassword = document.getElementById("confirmPassword").value;
-        
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+
+        if (!passwordPattern.test(password)) {
+            event.preventDefault();
+            alert("비밀번호는 대문자, 소문자, 숫자를 포함한 5~15자여야 합니다.");
+            return;
+        }
+
         if (password !== confirmPassword) {
             event.preventDefault();
             alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
         }
     });
-    
+
+
     // 페이지 로드 시 비밀번호 확인 상태 초기화
     window.onload = function() {
         var feedback = document.getElementById("passwordFeedback");

@@ -327,7 +327,7 @@
         <div class="product-card">
           <a href="productDetail.do?productId=<%= p.getNoProduct() %>" style="text-decoration: none; color: inherit; display: block;">
             <div class="product-img">
-              <!-- 상품 이미지 getImage.do?id=<%= p.getIdFile() %> -->
+              <!-- 상품 이미지  getImage.do?id=<%= p.getIdFile() %> -->
               <img src="" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
             </div>
             <div class="product-info">

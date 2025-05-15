@@ -21,7 +21,7 @@ public class SortProductListCommand implements Command {
         String sort = req.getParameter("sort");
         String categoryId = req.getParameter("categoryId");
         int category = 0;
-        if(categoryId != null || !categoryId.isEmpty()){
+        if (categoryId != null && !categoryId.isEmpty()) {
             category = Integer.parseInt(categoryId);
         }
 

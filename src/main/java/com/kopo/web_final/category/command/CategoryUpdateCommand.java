@@ -21,10 +21,11 @@ public class CategoryUpdateCommand implements Command {
 
         // nbParentCategory 처리
         String parentCategoryStr = req.getParameter("nbParentCategory");
+        System.out.println(req.getParameter("nbParentCategory"));
         if (parentCategoryStr != null && !parentCategoryStr.isEmpty()) {
             category.setNbParentCategory(Integer.parseInt(parentCategoryStr));
         } else {
-            category.setNbParentCategory(null);
+            category.setNbParentCategory(0);
         }
 
         category.setNmCategory(req.getParameter("nmCategory"));
