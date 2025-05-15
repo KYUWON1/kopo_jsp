@@ -2,29 +2,35 @@ package com.kopo.web_final.product.command.admin;
 
 import com.kopo.web_final.Command;
 import com.kopo.web_final.product.dao.CategoryProductMappingDao;
+import com.kopo.web_final.product.dao.ContentDao;
 import com.kopo.web_final.product.dao.ProductDao;
+import com.kopo.web_final.product.model.Content;
 import com.kopo.web_final.product.model.Product;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
+import java.nio.file.Paths;
 import java.sql.Connection;
+import java.time.LocalDate;
 
 public class ProductUpdateCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
-        System.out.println("ProductUpdate Do");
+
         System.out.println(req.getPart("productImage"));
-        System.out.println(req.getParameter("idFile"));
+        String fileId = req.getParameter("idFile");
+
         String productId = req.getParameter("noProduct");
         int categoryID = Integer.parseInt(req.getParameter("nbCategory"));
 
         Product product = new Product();
         product.setNmProduct(req.getParameter("nmProduct"));
         product.setNmDetailExplain(req.getParameter("nmDetailExplain"));
-        product.setIdFile("none");
+        product.setIdFile(req.getParameter("idFile")); // 기존 파일 ID 값
         product.setDtStartDate(req.getParameter("dtStartDate").replace("-", ""));
         product.setDtEndDate(req.getParameter("dtEndDate").replace("-", ""));
         product.setQtCustomer(Integer.parseInt(req.getParameter("qtCustomer")));
@@ -32,12 +38,28 @@ public class ProductUpdateCommand implements Command {
         product.setQtStock(Integer.parseInt(req.getParameter("qtStock")));
         product.setQtDeliveryFee(Integer.parseInt(req.getParameter("qtDeliveryFee")));
 
+        // 컨텐츠 테이블 생성
+        Part filePart = req.getPart("productImage");
+        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
         try (Connection conn = Db.getConnection()) {
             conn.setAutoCommit(false);
 
-            ProductDao dao = new ProductDao(conn);
-            CategoryProductMappingDao cpmDao = new CategoryProductMappingDao(conn);
+            // 컨텐츠 생성
+            ContentDao contentDao = new ContentDao(conn);
+            Content content = new Content();
+            content.setBoSaveFile(new javax.sql.rowset.serial.SerialBlob(filePart.getInputStream().readAllBytes()));
+            content.setNmOrgFile(fileName);
+            content.setDaSave(LocalDate.now());
+            int contentResult = contentDao.updateContent(fileId,content);
+            if (contentResult < 1) {
+                conn.rollback();
+                req.setAttribute("message", "컨텐츠 수정에 실패했습니다.");
+                req.setAttribute("type", "error");
+                return "productManagement.do";
+            }
 
+            ProductDao dao = new ProductDao(conn);
             int result1 = dao.updateProduct(productId, product);
             if (result1 < 1) {
                 conn.rollback();
@@ -46,6 +68,7 @@ public class ProductUpdateCommand implements Command {
                 return "productManagement.do";
             }
 
+            CategoryProductMappingDao cpmDao = new CategoryProductMappingDao(conn);
             int result2 = cpmDao.updateCpMapping(productId, categoryID);
             if (result2 < 1) {
                 conn.rollback();

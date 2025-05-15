@@ -1,9 +1,7 @@
 package com.kopo.web_final.product.dao;
 
-import com.kopo.web_final.exception.MemberException;
 import com.kopo.web_final.product.dto.ImageDisplayDto;
 import com.kopo.web_final.product.model.Content;
-import com.kopo.web_final.type.ErrorType;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -46,6 +44,25 @@ public class ContentDao {
                 return contentId;
             else
                 return null;
+        } catch (SQLException e) {
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
+        }
+    }
+
+    public int updateContent(String fileId, Content content) throws SQLException {
+
+        String sql = "UPDATE TB_CONTENT SET " +
+                "NM_ORG_FILE = ? ,  BO_SAVE_FILE = ?, DA_SAVE = ? " +
+                "WHERE ID_FILE = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, content.getNmOrgFile());
+            pstmt.setBlob(2, content.getBoSaveFile().getBinaryStream());
+            pstmt.setDate(3, toSqlDate(content.getDaSave())); // BLOB 처리
+            pstmt.setString(4, fileId);
+
+            return pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace(); // 로깅만 하고
             throw e; // 예외 그대로 던짐

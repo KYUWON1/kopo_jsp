@@ -445,8 +445,11 @@
 
     // 상품 수정 모달 열기
     function openEditModal(noProduct, nmProduct, nmDetailExplain, dtStartDate, dtEndDate, qtCustomer, qtSalePrice, qtStock, qtDeliveryFee, categoryId, idFile) {
-        document.getElementById('productForm').reset();
+        document.getElementById('productForm').reset();  // 먼저 리셋
+
         document.getElementById('modalTitle').textContent = '상품 수정';
+
+        // 값 세팅
         document.getElementById('noProduct').value = noProduct;
         document.getElementById('nmProduct').value = nmProduct;
         document.getElementById('nmDetailExplain').value = nmDetailExplain;
@@ -458,15 +461,19 @@
         document.getElementById('qtDeliveryFee').value = qtDeliveryFee;
         document.getElementById('idFile').value = idFile;
 
+        console.log(idFile);
         const previewArea = document.getElementById('imagePreview');
-        const imageUrl = `getImage.do?id=${idFile}`;
-        previewArea.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; height: auto; margin-bottom: 10px;">`;
+        const imageUrl = "getImage.do?id=" + idFile;
+        console.log(imageUrl);
 
-        // 상품 수정 모달 열기 함수 중...
+        // 문자열 방식으로 직접 조립
+        previewArea.innerHTML =
+            '<img src="' + imageUrl + '" alt="상품 이미지" style="width: 100%; max-height: 200px; object-fit: contain;">';
+
+
+        // 카테고리 설정
         const categorySelect = document.getElementById('categorySelection');
         const categoryValue = String(categoryId);
-
-// 해당 categoryId가 select에 존재하는지 확인
         let exists = false;
         for (let i = 0; i < categorySelect.options.length; i++) {
             if (categorySelect.options[i].value === categoryValue) {
@@ -474,19 +481,15 @@
                 break;
             }
         }
-
-
-// 존재하면 선택, 없으면 "없음" 선택 (value="0")
         categorySelect.value = exists ? categoryValue : "0";
 
         document.getElementById('productForm').action = '/productUpdate.do';
-
-        // 상품 ID 필드 표시 (읽기 전용)
         document.getElementById('noProductField').style.display = 'block';
         document.getElementById('noProduct').readOnly = true;
 
         document.getElementById('productModal').style.display = 'block';
     }
+
 
     let deleteProductId = null;
     let deleteCategoryId = null;
@@ -688,6 +691,12 @@
             </div>
 
             <div class="form-group">
+                <label for="productImage">상품 이미지</label>
+                <div id="imagePreview"></div> <!-- ⭐ 이미지 미리보기 영역 -->
+                <input type="file" id="productImage" name="productImage" class="form-input" accept="image/*">
+            </div>
+
+            <div class="form-group">
                 <label for="nmProduct">상품명</label>
                 <input type="text" id="nmProduct" name="nmProduct" class="form-input"
                        placeholder="상품명을 입력하세요" required>
@@ -731,12 +740,6 @@
             <div class="form-group">
                 <label for="dtEndDate">판매 종료일</label>
                 <input type="date" id="dtEndDate" name="dtEndDate" class="form-input" required>
-            </div>
-
-            <div class="form-group">
-                <label for="productImage">상품 이미지</label>
-                <div id="imagePreview"></div> <!-- ⭐ 이미지 미리보기 영역 -->
-                <input type="file" id="productImage" name="productImage" class="form-input" accept="image/*">
             </div>
 
             <input type="hidden" name="noRegister" value="<%= loginUser.getIdUser() %>">
