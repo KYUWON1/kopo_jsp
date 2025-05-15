@@ -98,4 +98,42 @@ public class OrderItemDao {
             throw e;
         }
     }
+
+    public List<GetOrderItemDto> getOrderItemListDetail(String idOrder) throws SQLException {
+        String sqlQuery = "select o.*,p.nm_product,p.qt_customer,p.qt_delivery_fee,p.id_file from tb_order_item o\n" +
+                "join tb_product p on o.no_product = p.no_product\n" +
+                "where o.id_order = ? order by cn_order_item asc";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setString(1, idOrder);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            List<GetOrderItemDto> getOrderItemDtoList = new ArrayList<>();
+            while(rs.next()){
+                GetOrderItemDto orderItem = new GetOrderItemDto();
+                orderItem.setNoProduct(rs.getInt("NO_PRODUCT"));
+                orderItem.setQtUnitPrice(rs.getInt("QT_UNIT_PRICE"));
+                orderItem.setQtOrderItem(rs.getInt("QT_ORDER_ITEM"));
+                orderItem.setQtOrderItemAmount(rs.getInt("QT_ORDER_ITEM_AMOUNT"));
+                orderItem.setQtOrderItemDelivery(rs.getInt("QT_ORDER_ITEM_DELIVERY_FEE"));
+                orderItem.setNmProduct(rs.getString("NM_PRODUCT"));
+                orderItem.setIdFile(rs.getString("ID_FILE"));
+
+                orderItem.setStPayment(rs.getString("ST_PAYMENT"));
+                orderItem.setNoRegister(rs.getString("NO_REGISTER"));
+                orderItem.setDaFirstDate(rs.getDate("DA_FIRST_DATE").toLocalDate());
+                orderItem.setStPayment(rs.getString("ID_ORDER_ITEM"));
+                orderItem.setIdOrder(rs.getString("ID_ORDER"));
+                orderItem.setCnOrderItem(rs.getInt("CN_ORDER_ITEM"));
+
+
+                getOrderItemDtoList.add(orderItem);
+            }
+            return getOrderItemDtoList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

@@ -26,7 +26,7 @@ public class GetOrderCommand implements Command {
 
         try(Connection conn = Db.getConnection()){
             OrderDao orderDao = new OrderDao(conn);
-            List<GetOrderDto> orderList = orderDao.getOrder(idUser);
+            List<GetOrderDto> orderList = orderDao.getOrderByUserId(idUser);
 
             req.setAttribute("orderList",orderList);
         }catch (Exception e) {

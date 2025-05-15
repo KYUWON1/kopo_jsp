@@ -1,5 +1,7 @@
 package com.kopo.web_final.order.dto;
 
+import java.time.LocalDate;
+
 public class GetOrderItemDto {
     private int noProduct;
     private int qtUnitPrice;
@@ -8,6 +10,18 @@ public class GetOrderItemDto {
     private int qtOrderItemDelivery;
     private String nmProduct;
     private String idFile;
+
+    // 관리자용 데이터
+    private String stPayment;               // 결제 상태 코드
+
+    private String noRegister;              // 등록자 ID
+    private LocalDate daFirstDate;               // 등록일시
+
+
+    private String idOrderItem;             // 주문 상세 ID (PK)
+    private String idOrder;                 // 주문 ID (FK)
+    private int cnOrderItem;            // 주문 내 항목 순번
+
 
     public GetOrderItemDto() {
     }
@@ -76,5 +90,53 @@ public class GetOrderItemDto {
 
     public void setNoProduct(int noProduct) {
         this.noProduct = noProduct;
+    }
+
+    public String getStPayment() {
+        return stPayment;
+    }
+
+    public void setStPayment(String stPayment) {
+        this.stPayment = stPayment;
+    }
+
+    public String getNoRegister() {
+        return noRegister;
+    }
+
+    public void setNoRegister(String noRegister) {
+        this.noRegister = noRegister;
+    }
+
+    public LocalDate getDaFirstDate() {
+        return daFirstDate;
+    }
+
+    public void setDaFirstDate(LocalDate daFirstDate) {
+        this.daFirstDate = daFirstDate;
+    }
+
+    public String getIdOrderItem() {
+        return idOrderItem;
+    }
+
+    public void setIdOrderItem(String idOrderItem) {
+        this.idOrderItem = idOrderItem;
+    }
+
+    public String getIdOrder() {
+        return idOrder;
+    }
+
+    public void setIdOrder(String idOrder) {
+        this.idOrder = idOrder;
+    }
+
+    public int getCnOrderItem() {
+        return cnOrderItem;
+    }
+
+    public void setCnOrderItem(int cnOrderItem) {
+        this.cnOrderItem = cnOrderItem;
     }
 }

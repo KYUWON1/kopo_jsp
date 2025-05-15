@@ -84,11 +84,45 @@ public class OrderDao {
         }
     }
 
-    public List<GetOrderDto> getOrder(String idUser) throws SQLException {
+    public List<GetOrderDto> getOrderByUserId(String idUser) throws SQLException {
         String sqlQuery = "SELECT * FROM TB_ORDER WHERE NO_USER = ? ORDER BY DA_ORDER DESC ";
         try(PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.setString(1, idUser);
 
+            ResultSet rs = pstmt.executeQuery();
+
+            List<GetOrderDto> ordetList = new ArrayList<>();
+            while(rs.next()){
+                GetOrderDto getOrderDto = new GetOrderDto();
+                getOrderDto.setIdOrder(rs.getString("ID_ORDER"));
+                getOrderDto.setNoUser(rs.getString("NO_USER"));
+                getOrderDto.setQtOrderAmount(rs.getInt("QT_ORDER_AMOUNT"));
+                getOrderDto.setQtDeliMoney(rs.getInt("QT_DELI_MONEY"));
+                getOrderDto.setQtDeliPeriod(rs.getInt("QT_DELI_PERIOD"));
+                getOrderDto.setNmOrderPerson(rs.getString("NM_ORDER_PERSON"));
+                getOrderDto.setNmReceiver(rs.getString("NM_RECEIVER"));
+                getOrderDto.setNoDeliveryZipno(rs.getString("NO_DELIVERY_ZIPNO"));
+                getOrderDto.setNmDeliveryAddress(rs.getString("NM_DELIVERY_ADDRESS"));
+                getOrderDto.setNmReceiverTelno(rs.getString("NM_RECEIVER_TELNO"));
+                getOrderDto.setNmDeliverySpace(rs.getString("NM_DELIVERY_SPACE"));
+                getOrderDto.setCdOrderType(rs.getString("CD_ORDER_TYPE"));
+                getOrderDto.setStOrder(rs.getString("ST_ORDER"));
+                getOrderDto.setStPayment(rs.getString("ST_PAYMENT"));
+                getOrderDto.setNoRegister(rs.getString("NO_REGISTER"));
+                getOrderDto.setDaOrder(rs.getDate("DA_ORDER").toLocalDate());
+
+                ordetList.add(getOrderDto);
+            }
+            return ordetList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public List<GetOrderDto> getOrder() throws SQLException {
+        String sqlQuery = "SELECT * FROM TB_ORDER ORDER BY DA_ORDER DESC ";
+        try(PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             ResultSet rs = pstmt.executeQuery();
 
             List<GetOrderDto> ordetList = new ArrayList<>();
