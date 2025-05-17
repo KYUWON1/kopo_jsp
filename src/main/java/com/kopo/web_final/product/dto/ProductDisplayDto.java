@@ -2,18 +2,22 @@ package com.kopo.web_final.product.dto;
 
 import com.kopo.web_final.product.model.Product;
 
+import java.sql.Blob;
+
 public class ProductDisplayDto {
     private Product product;
     private String categoryName;
     private int categoryId;
+    private String fileId;
 
     public ProductDisplayDto() {
     }
 
-    public ProductDisplayDto(Product product, String categoryName, int categoryId) {
+    public ProductDisplayDto(Product product, String categoryName, int categoryId, String fileId) {
         this.product = product;
         this.categoryName = categoryName;
         this.categoryId = categoryId;
+        this.fileId = fileId;
     }
 
     public Product getProduct() {
@@ -38,5 +42,13 @@ public class ProductDisplayDto {
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 }

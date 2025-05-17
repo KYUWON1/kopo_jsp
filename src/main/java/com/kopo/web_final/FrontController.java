@@ -1,6 +1,7 @@
 package com.kopo.web_final;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,   // 1MB
+        maxFileSize = 1024 * 1024 * 10,    // 10MB
+        maxRequestSize = 1024 * 1024 * 50  // 50MB
+)
 @WebServlet("*.do")
 public class FrontController extends HttpServlet {
     public FrontController() {
@@ -16,8 +22,6 @@ public class FrontController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uri = request.getRequestURI();
         System.out.println("URI: " + uri);
-        String contextPath = request.getContextPath();
-        System.out.println("contextPath: " + contextPath);
         String commandKey = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf(".do"));
         System.out.println("commandKey: " + commandKey);
 

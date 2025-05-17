@@ -5,6 +5,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <style>
   /* 콘텐츠 영역 */
+  /* main.css - 메인 페이지 전용 CSS */
+
   .content-container {
     max-width: 1200px;
     margin: 120px auto 40px;
@@ -15,7 +17,7 @@
     background-color: white;
     border-radius: 8px;
     padding: 30px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     border: 1px solid #e0e0e0;
   }
 
@@ -59,13 +61,13 @@
     background-color: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
   }
 
   .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
 
   .product-img {
@@ -87,6 +89,24 @@
     margin-bottom: 8px;
   }
 
+  .product-original-price {
+    font-size: 13px;
+    color: #c40000;
+    text-decoration: line-through;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .product-discount-price {
+    font-size: 16px;
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .product-card a {
+    text-decoration: none;
+    color: inherit;
+  }
   .product-price {
     color: #4caf50;
     font-weight: 600;
@@ -138,7 +158,7 @@
     margin: 0;
     display: none;
     min-width: 180px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 200;
   }
 
@@ -175,6 +195,40 @@
   .category-sub li:hover > .category-sub {
     display: block;
   }
+
+  /* 검색 및 정렬 폼 */
+  .search-sort-form {
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .search-sort-form input[type="text"],
+  .search-sort-form select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  .search-sort-form button {
+    padding: 8px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .search-sort-form button:hover {
+    background-color: #388e3c;
+  }
+
+
 </style>
 
 <%@ include file="/common/header.jsp" %>
@@ -207,6 +261,22 @@
 
 
   <div class="main-content">
+    <!-- 상품 검색 및 정렬 -->
+    <form method="get" action="productListSort.do" class="search-sort-form">
+      <input type="hidden" name="categoryId" value="<%= request.getParameter("categoryId") != null ? request.getParameter("categoryId") : "" %>">
+
+      <input type="text" name="keyword" placeholder="상품명 검색"
+             value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>">
+
+      <select name="sort">
+        <option value="">-- 정렬 선택 --</option>
+        <option value="asc" <%= "asc".equals(request.getParameter("sort")) ? "selected" : "" %>>낮은 가격순</option>
+        <option value="desc" <%= "desc".equals(request.getParameter("sort")) ? "selected" : "" %>>높은 가격순</option>
+      </select>
+
+      <button type="submit">검색</button>
+    </form>
+
     <div class="category-menu">
       <ul class="category-root">
         <% for (Category parent : categoryList) {
@@ -248,22 +318,29 @@
       </ul>
     </div>
     <div class="featured-section">
-      <h2>추천 상품</h2>
+      <h2>상품 목록</h2>
 
       <div class="product-grid">
         <% for (ProductDisplayDto dto : productListWithCategory) {
           Product p = dto.getProduct();
         %>
         <div class="product-card">
-          <div class="product-img">
-            <img src="<%= request.getContextPath() %>/upload/<%= p.getIdFile() %>" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
-          </div>
-          <div class="product-info">
-            <div class="product-title"><%= p.getNmProduct() %></div>
-            <div class="product-price"><%= String.format("%,d원", p.getQtSalePrice()) %></div>
-            <div class="product-desc" style="font-size: 14px; color: #777; margin-top: 8px;"><%= p.getNmDetailExplain() %></div>
-            <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">카테고리: <%= dto.getCategoryName() %></div>
-          </div>
+          <a href="productDetail.do?productId=<%= p.getNoProduct() %>" style="text-decoration: none; color: inherit; display: block;">
+            <div class="product-img">
+              <!-- 상품 이미지  getImage.do?id=<%= p.getIdFile() %> -->
+              <img src="" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
+            </div>
+            <div class="product-info">
+              <div class="product-title"><%= p.getNmProduct() %></div>
+              <div class="product-original-price">
+                <%= String.format("%,d원", p.getQtSalePrice()) %>
+              </div>
+              <div class="product-discount-price">
+                <%= String.format("%,d원", p.getQtCustomer()) %>
+              </div>
+              <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">카테고리: <%= dto.getCategoryName() %></div>
+            </div>
+          </a>
         </div>
         <% } %>
       </div>

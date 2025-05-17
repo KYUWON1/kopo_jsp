@@ -2,9 +2,6 @@
 <%@ page import="com.kopo.web_final.member.model.Member" %>
 <%@ page import="com.kopo.web_final.category.model.Category" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="java.time.LocalDate" %>
 <%
     // 관리자 로그인 확인
     Member loginUser = (Member) session.getAttribute("loginUser");
@@ -438,14 +435,37 @@ function closeModal() {
         // 수정에서는 카테고리 번호 필드를 보이게 함 (읽기 전용)
         document.getElementById('nbCategoryField').style.display = 'block';
         document.getElementById('nbCategory').readOnly = true;
+
         updateCategoryLevel();
+
+        // 상위 카테고리 옵션 필터링 (수정 중인 카테고리보다 높은 레벨만 보여줌)
+        const currentLevel = parseInt(level); // 현재 수정 중인 카테고리 레벨
+        const parentCategorySelect = document.getElementById('nbParentCategory');
+        const categoryData = getCategoryData();
+
+        for (let i = 0; i < parentCategorySelect.options.length; i++) {
+            const option = parentCategorySelect.options[i];
+            if (option.value === "") {
+                option.style.display = "block"; // 최상위용은 항상 보이게
+                continue;
+            }
+
+            // 옵션에 해당하는 카테고리의 레벨 찾기
+            const matching = categoryData.find(cat => cat.id == option.value);
+            if (matching) {
+                const parentLevel = parseInt(matching.level);
+                if (parentLevel >= currentLevel || parseInt(option.value) === parseInt(nbCategory)) {
+                    option.style.display = "none"; // 자기 자신이거나 하위레벨이면 숨김
+                } else {
+                    option.style.display = "block"; // 상위 레벨이면 표시
+                }
+            }
+        }
 
         // 모달 스크롤 맨 위로
         document.querySelector('.modal-content').scrollTop = 0;
         // 페이지 스크롤도 모달이 잘 보이도록 조정
         window.scrollTo(0, 0);
-
-
     }
     
     

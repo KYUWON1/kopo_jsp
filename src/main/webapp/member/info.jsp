@@ -473,6 +473,16 @@
         var newPasswordValue = newPassword.value;
         var confirmPasswordValue = confirmPassword.value;
 
+        // 정규식: 대문자 1개 이상, 소문자 1개 이상, 숫자 1개 이상, 길이 5~15자
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+
+        if (!passwordPattern.test(newPasswordValue)) {
+            passwordFeedback.innerHTML = "비밀번호는 대문자, 소문자, 숫자를 포함한 5~15자여야 합니다.";
+            passwordFeedback.className = "password-feedback invalid-feedback";
+            savePasswordBtn.disabled = true;
+            return;
+        }
+
         if (confirmPasswordValue === "") {
             passwordFeedback.innerHTML = "";
             passwordFeedback.className = "password-feedback";
@@ -500,15 +510,17 @@
         var newPasswordValue = newPassword.value;
         var confirmPasswordValue = confirmPassword.value;
 
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+
         if (currentPasswordValue === "") {
             e.preventDefault();
             alert("현재 비밀번호를 입력해주세요.");
             return false;
         }
 
-        if (newPasswordValue.length < 4) {
+        if (!passwordPattern.test(newPasswordValue)) {
             e.preventDefault();
-            alert("새 비밀번호는 최소 4자 이상이어야 합니다.");
+            alert("새 비밀번호는 대문자, 소문자, 숫자를 포함한 5~15자여야 합니다.");
             return false;
         }
 

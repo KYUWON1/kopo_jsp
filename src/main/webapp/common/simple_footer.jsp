@@ -1,12 +1,15 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!-- 간소화된 푸터 영역 -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+
+</div> <%-- layout div 닫기 --%>
 <footer>
   <div class="footer-container">
-    <p class="footer-text">&copy; 2023 심플리원 쇼핑몰 All Rights Reserved.</p>
+    <p class="footer-text">&copy; 2025 심플리원 쇼핑몰 All Rights Reserved.</p>
   </div>
 </footer>
+</body>
+</html>
+
 <style>
-  /* 푸터 스타일 */
   footer {
     background-color: #2e7d32;
     color: white;
@@ -26,5 +29,3 @@
     opacity: 0.8;
   }
 </style>
-</body>
-</html>

@@ -28,4 +28,28 @@
     <!--
     <Manager pathname="SESSIONS.ser" />
     -->
+    <!--
+    -->
+    <Resource name="jdbc/OracleDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="oracle.jdbc.OracleDriver"
+              url="jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C:/Users/user/IdeaProjects/web_final/Wallet_DinkDB"
+              username="DA2507"
+              password="Data2507"
+              maxTotal="10"
+              maxIdle="5"
+              maxWaitMillis="-1"/>
+
+    <Resource name="jdbc/LocalOracleDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="oracle.jdbc.OracleDriver"
+              url="jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C:/Users/user/IdeaProjects/web_final/Wallet_DinkDB"
+              username="DA2507"
+              password="Data2507"
+              maxTotal="10"
+              maxIdle="5"
+              maxWaitMillis="-1"/>
 </Context>
+
