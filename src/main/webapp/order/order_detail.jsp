@@ -1,8 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.order.dto.GetOrderItemDto" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
+  // 로그인 체크
+  Member loginUser = AuthUtils.checkLogin(request,response);
+  if(loginUser == null){
+    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+  }
+
   String idOrder = (String) request.getAttribute("idOrder");
   String totalPrice = (String) request.getAttribute("totalPrice");
   String nmReceiver = (String) request.getAttribute("nmReceiver");

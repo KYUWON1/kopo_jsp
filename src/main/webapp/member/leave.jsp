@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.type.ErrorType" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     String error = (String)request.getAttribute("error");
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if(loginUser == null){
-        response.sendRedirect("/member/login.jsp");
-        return;
+    Member loginUser = AuthUtils.checkLogin(request,response);
+    if (loginUser == null) {
+        request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
     }
 %>
 <style>

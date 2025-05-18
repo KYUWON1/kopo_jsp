@@ -1,13 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.member.model.Member" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.kopo.web_final.type.UserStatus" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     // 로그인 체크 및 관리자 권한 확인
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null || !"_20".equals(loginUser.getCdUserType())) {
-        response.sendRedirect("/member/login.jsp");
-        return;
+    Member loginUser = AuthUtils.checkAdmin(request, response);
+    if (loginUser == null) {
+        request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+    }
+
+    // 관리자 타입 확인 (_20)
+    if (!"_20".equals(loginUser.getCdUserType())) {
+        request.setAttribute("error","관리자만 접근할 수 있습니다.");
+        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
     }
 
     // 가입 신청 회원 목록 조회는 서블릿에서 처리한다고 가정

@@ -15,6 +15,7 @@ public class ProductDeleteCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("DELETE: ProductDeleteCommand, ID :" + req.getParameter("noProduct"));
 
         String noProduct = req.getParameter("noProduct");
         String nmCategory = req.getParameter("nmCategory");

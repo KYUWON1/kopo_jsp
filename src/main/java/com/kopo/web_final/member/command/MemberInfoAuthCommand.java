@@ -16,6 +16,7 @@ public class MemberInfoAuthCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("POST: MemberInfoAuthCommand, ID : " + req.getParameter("idUser"));
 
         String idUser = req.getParameter("idUser");
         String password = req.getParameter("password");
@@ -26,7 +27,6 @@ public class MemberInfoAuthCommand implements Command {
             Member member = dao.findById(idUser);
 
             if(!member.getNmPaswd().equals(password)){
-                System.out.println("비밀번호가 잘못되었습니다.");
                 req.setAttribute("error", ErrorType.INVALID_CREDENTIALS.getMessage());
                 return "/member/info_auth.jsp";
             }

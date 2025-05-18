@@ -12,7 +12,8 @@ public class CategoryDeleteCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8"); // Y
-        System.out.println(req.getParameter("nbCategory"));
+        System.out.println("DELETE : CategoryDeleteCommand, ID : " + req.getParameter("nbCategory"));
+
         try(Connection conn = Db.getConnection()){
             CategoryDao dao = new CategoryDao(conn);
 

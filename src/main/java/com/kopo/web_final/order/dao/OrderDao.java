@@ -76,7 +76,6 @@ public class OrderDao {
             if(result < 1){
                 return null;
             }
-            System.out.println(idOrder);
             return idOrder;
         } catch (SQLException e) {
             e.printStackTrace();

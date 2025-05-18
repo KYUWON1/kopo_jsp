@@ -15,6 +15,7 @@ public class GetProductImageCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         String id = req.getParameter("id");
+        System.out.println("GET: GetProductImageCommand : id : " + id);
 
         if (id == null || id.isEmpty()) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "이미지 ID가 누락되었습니다.");
@@ -44,7 +45,6 @@ public class GetProductImageCommand implements Command {
             }
 
         } catch (Exception e) {
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "이미지 처리 중 오류 발생");
             e.printStackTrace();
         }
 

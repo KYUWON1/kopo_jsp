@@ -14,13 +14,13 @@ public class MemberJoinCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("POST: MemberJoinCommand");
 
         try(Connection conn = Db.getConnection()){
             MemberDao dao = new MemberDao(conn);
 
             // 이메일 중복 검증
             if(dao.checkEmailExist(req.getParameter("email")) > 0){
-                System.out.println("해당 이메일은 존재합니다.");
                 req.setAttribute("error", ErrorType.DUPLICATE_ID.getMessage());
                return "/member/signup.jsp";
             }
@@ -33,8 +33,7 @@ public class MemberJoinCommand implements Command {
             ));
 
             if(result != 1){
-                System.out.println("가입 에러 발생.");
-                req.setAttribute("error", ErrorType.INTERNAL_ERROR);
+                req.setAttribute("error", ErrorType.INTERNAL_ERROR.getMessage());
                 return "/member/signup.jsp";
             }
             req.setAttribute("userName", req.getParameter("userName"));

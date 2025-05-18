@@ -17,6 +17,7 @@ public class LoginCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         res.setCharacterEncoding("UTF-8");
+        System.out.println("POST: LoginCommand");
 
         try(Connection conn = Db.getConnection()) {
             MemberDao dao = new MemberDao(conn);
@@ -25,18 +26,15 @@ public class LoginCommand implements Command {
 
             // 계정 존재 X or 활성화 상태 확인
             if(member == null){
-                System.out.println("해당 이메일은 존재하지않습니다.");
                 req.setAttribute("error", ErrorType.USER_NOT_FOUND.getMessage());
                 return "/member/login.jsp";
             }
             if(!member.getStStatus().equals(UserStatus.ST01.toString())){
-                System.out.println("사용 정지된 계정");
                 req.setAttribute("error", ErrorType.USER_NOT_FOUND.getMessage());
                 return "/member/login.jsp";
             }
             // 패스워드 일치 X
             if(!member.getNmPaswd().equals(req.getParameter("password"))){
-                System.out.println("비밀번호가 잘못되었습니다.");
                 req.setAttribute("error", ErrorType.INVALID_CREDENTIALS.getMessage());
                 return "/member/login.jsp";
             }

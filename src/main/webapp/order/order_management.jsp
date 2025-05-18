@@ -1,9 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.order.dto.GetOrderDto" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
+    // 로그인 체크
+    Member loginUser = AuthUtils.checkLogin(request,response);
+    if(loginUser == null){
+        request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+    }
+
     List<GetOrderDto> orderList = (List<GetOrderDto>) request.getAttribute("orderList");
+    String message = (String) request.getAttribute("message");
 %>
 
 <%@ include file="/common/header.jsp" %>
@@ -93,6 +102,17 @@
     form {
         margin: 0;
     }
+
+    .message-box {
+        margin-bottom: 30px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        background-color: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        color: #2e7d32;
+        font-size: 16px;
+        font-weight: 500;
+    }
 </style>
 
 <div class="order-container">
@@ -100,6 +120,10 @@
 
     <% if (orderList == null || orderList.isEmpty()) { %>
     <div class="no-orders">주문 내역이 없습니다.</div>
+    <% if (message != null && !message.isEmpty()) { %>
+    <div class="message-box"><%= message %></div>
+    <% } %>
+
     <% } else {
         for (GetOrderDto order : orderList) {
     %>
@@ -123,7 +147,11 @@
             <p class="order-amount">주문 금액: <%= String.format("%,d", order.getQtOrderAmount()) %>원</p>
             <p><strong>배송지:</strong> <%= order.getNmDeliveryAddress() %> <%= order.getNmDeliverySpace() %></p>
             <p><strong>수령인:</strong> <%= order.getNmReceiver() %></p>
-            <p><strong>배송 상태:</strong> <%= order.getStOrder() %></p>
+            <p><strong>배송 상태:</strong>
+                <%= "10".equals(order.getStOrder()) ? "결제완료" :
+                        "20".equals(order.getStOrder()) ? "배송중" :
+                                "기타 상태 (" + order.getStOrder() + ")" %>
+            </p>
         </div>
     </div>
 

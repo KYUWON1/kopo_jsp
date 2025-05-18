@@ -17,6 +17,8 @@ public class GetOrderDetailCommand implements Command {
         req.setCharacterEncoding("UTF-8");
 
         String idOrder = req.getParameter("idOrder");
+        System.out.println("GET: GetOrderDetailCommand, IdOrder : " + idOrder);
+
         String totalPrice = req.getParameter("totalPrice");
         String nmReceiver = req.getParameter("nmReceiver");
         String nmDeliveryAddress = req.getParameter("nmDeliveryAddress");

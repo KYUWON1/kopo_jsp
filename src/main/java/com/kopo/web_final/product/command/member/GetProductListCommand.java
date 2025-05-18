@@ -15,8 +15,9 @@ import java.util.List;
 public class GetProductListCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-
         req.setCharacterEncoding("UTF-8");
+        System.out.println("GET: GetProductListCommand, categoryId : " + req.getParameter("categoryId"));
+
         String categoryId = req.getParameter("categoryId");
 
 

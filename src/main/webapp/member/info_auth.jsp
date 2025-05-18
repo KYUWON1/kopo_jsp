@@ -1,12 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.member.model.Member" %>
 <%@ page import="java.net.URLDecoder" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
   // 로그인 체크
-  Member loginUser = (Member) session.getAttribute("loginUser");
+  Member loginUser = AuthUtils.checkLogin(request,response);
   if (loginUser == null) {
-    response.sendRedirect("/member/login.jsp");
-    return;
+    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
   }
 
   // 에러 메시지 처리
@@ -14,7 +15,6 @@
   if (error != null && !error.isEmpty()) {
     error = URLDecoder.decode(error, "UTF-8");
   }
-  System.out.println(error);
 %>
 <!DOCTYPE html>
 <html>

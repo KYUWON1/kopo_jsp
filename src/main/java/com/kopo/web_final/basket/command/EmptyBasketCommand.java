@@ -12,6 +12,7 @@ public class EmptyBasketCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("DELETE: EmptyBasketCommand: " + req.getParameter("nbBasket"));
 
         String nbBasket = req.getParameter("nbBasket");
 

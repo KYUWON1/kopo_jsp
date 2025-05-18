@@ -15,13 +15,13 @@ public class CategoryUpdateCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("UPDATE : CategoryUpdateCommand, ID : " + req.getParameter("nbCategory"));
 
         Category category = new Category();
         String noCategory = req.getParameter("nbCategory");
 
         // nbParentCategory 처리
         String parentCategoryStr = req.getParameter("nbParentCategory");
-        System.out.println(req.getParameter("nbParentCategory"));
         if (parentCategoryStr != null && !parentCategoryStr.isEmpty()) {
             category.setNbParentCategory(Integer.parseInt(parentCategoryStr));
         } else {

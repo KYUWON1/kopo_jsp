@@ -15,6 +15,7 @@ public class MemberInfoUpdateCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("POST: MemberInfoUpdateCommand, ID : " + req.getParameter("idUser"));
 
         try (Connection conn = Db.getConnection()) {
             MemberDao dao = new MemberDao(conn);
@@ -29,7 +30,6 @@ public class MemberInfoUpdateCommand implements Command {
 
             // 이메일이 변경되었을 때만 중복 검증 수행
             if (!email.equals(bfEmail) && dao.checkEmailExist(email) > 0) {
-                System.out.println("해당 이메일은 이미 존재합니다.");
                 req.setAttribute("message", ErrorType.DUPLICATE_ID.getMessage());
                 req.setAttribute("type", "error");
                 return "/member/info.jsp";
@@ -62,6 +62,7 @@ public class MemberInfoUpdateCommand implements Command {
             e.printStackTrace();
             return "/error/500.jsp";
         }
+
         return "/member/info.jsp";
     }
 }

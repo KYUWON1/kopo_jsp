@@ -145,8 +145,6 @@
 
 <%
     Product product = (Product)request.getAttribute("productDetailById");
-
-    Member loginUser = (Member) session.getAttribute("loginUser");
     if (product == null) {
 %>
     <h2 style="text-align: center; margin-top: 150px;">해당 상품을 찾을 수 없습니다.</h2>

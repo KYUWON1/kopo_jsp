@@ -21,9 +21,7 @@ public class FrontController extends HttpServlet {
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        System.out.println("URI: " + uri);
         String commandKey = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf(".do"));
-        System.out.println("commandKey: " + commandKey);
 
         Command command = CommandFactory.getCommand(commandKey);
 
@@ -34,7 +32,7 @@ public class FrontController extends HttpServlet {
                 viewPage = command.execute(request, response);
 
                 // viewPage가 null이 아닐 때만 forward 실행
-                if (viewPage != null) {
+                if (viewPage != null && !response.isCommitted()) {
                     request.getRequestDispatcher(viewPage).forward(request, response);
                 }
                 // viewPage가 null이면 이미 리다이렉트된 것으로 간주
@@ -42,8 +40,9 @@ public class FrontController extends HttpServlet {
             } else {
                 // 직접 JSP로 forward
                 request.setAttribute("errorMessage", "요청하신 기능을 찾을 수 없습니다.");
-                request.getRequestDispatcher("/error/404.jsp").forward(request, response);
-                return;
+                if (!response.isCommitted()) {
+                    request.getRequestDispatcher("/error/404.jsp").forward(request, response);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

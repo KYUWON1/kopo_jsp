@@ -14,7 +14,6 @@ public class GetProductDetailCommand implements Command {
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
         String productId = req.getParameter("productId");
-
         System.out.println("GET:ProductDetail : productId : " + productId);
 
         try(Connection conn = Db.getConnection()){

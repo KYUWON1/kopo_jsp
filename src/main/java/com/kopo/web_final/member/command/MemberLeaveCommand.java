@@ -18,9 +18,8 @@ public class MemberLeaveCommand implements Command {
         String idUser = req.getParameter("idUser");
         String password = req.getParameter("password");
 
-        System.out.println("POST: leave");
-        System.out.println("idUser: " + idUser);
-        System.out.println("password: " + password);
+
+        System.out.println("POST: leave "+"idUser: " + idUser);
 
         try(Connection conn = Db.getConnection()){
             MemberDao dao = new MemberDao(conn);

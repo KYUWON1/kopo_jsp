@@ -12,6 +12,8 @@ public class CategoryStatusUpdateCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8"); // Y
+        System.out.println("UPDATE : CategoryStatusUpdateCommand, ID : " + req.getParameter("nbCategory"));
+
         String ynUse = req.getParameter("ynUse");
         try(Connection conn = Db.getConnection()){
             CategoryDao dao = new CategoryDao(conn);

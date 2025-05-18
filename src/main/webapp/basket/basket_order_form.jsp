@@ -2,9 +2,15 @@
 <%@ page import="com.kopo.web_final.member.model.Member" %>
 <%@ page import="com.kopo.web_final.basket.dto.ProductItemDto" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
-  Member loginUser = (Member) session.getAttribute("loginUser");
+  Member loginUser = AuthUtils.checkLogin(request,response);
+  if (loginUser == null) {
+    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+
+  }
   List<ProductItemDto> productList = (List<ProductItemDto>) request.getAttribute("productListByBasketIdList");
   int totalPrice = (Integer) request.getAttribute("totalPrice");
   int totalDeliveryPrice = (Integer) request.getAttribute("totalDeliveryPrice");

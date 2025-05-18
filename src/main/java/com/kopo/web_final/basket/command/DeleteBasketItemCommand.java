@@ -15,6 +15,7 @@ public class DeleteBasketItemCommand implements Command {
 
         String nbBasketItem = req.getParameter("nbBasketItem");
         System.out.println("DELETE: BasketItem: " + nbBasketItem);
+
         try(Connection conn = Db.getConnection()){
             BasketItemDao basketItemDao = new BasketItemDao(conn);
             int result = basketItemDao.deleteBasketItem(nbBasketItem);

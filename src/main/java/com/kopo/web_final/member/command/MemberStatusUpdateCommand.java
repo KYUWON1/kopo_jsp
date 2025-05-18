@@ -16,11 +16,13 @@ public class MemberStatusUpdateCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("UPDATE: MemberStatusUpdateCommand, ID : " + req.getParameter("targetId"));
 
         HttpSession session = req.getSession();
         Member loginUser = (Member) session.getAttribute("loginUser");
 
         if (loginUser == null || !"_20".equals(loginUser.getCdUserType())) {
+            req.setAttribute("error","변경할 권한이 없습니다.");
             return "/member/login.jsp";
         }
 

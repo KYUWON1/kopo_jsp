@@ -16,11 +16,20 @@
     max-width: 700px;
     margin: 120px auto;
     padding: 40px;
+    font-family: Arial, sans-serif;
+    border-radius: 8px;
+  }
+
+  .success-container.success {
     background-color: #f9fdf9;
     border: 1px solid #c8e6c9;
-    border-radius: 8px;
-    font-family: Arial, sans-serif;
     color: #2e7d32;
+  }
+
+  .success-container.error {
+    background-color: #fff8f8;
+    border: 1px solid #ef9a9a;
+    color: #c62828;
   }
 
   .success-container h2 {
@@ -35,7 +44,7 @@
 
   .success-container .highlight {
     font-weight: bold;
-    color: #1b5e20;
+    color: inherit; /* 현재 텍스트 컬러 상속 */
   }
 
   .success-container .btn-home {
@@ -56,7 +65,7 @@
 
 <%@ include file="/common/header.jsp" %>
 
-<div class="success-container">
+<div class="success-container <%= "error".equals(type) ? "error" : "success" %>">
   <h2><%= message != null ? message : "주문 완료" %></h2>
 
   <p>주문 ID: <span class="highlight"><%= orderId %></span></p>

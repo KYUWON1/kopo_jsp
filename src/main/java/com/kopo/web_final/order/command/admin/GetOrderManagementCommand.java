@@ -4,6 +4,7 @@ import com.kopo.web_final.Command;
 import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.order.dao.OrderDao;
 import com.kopo.web_final.order.dto.GetOrderDto;
+import com.kopo.web_final.utils.AuthUtils;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,10 +16,18 @@ import java.util.List;
 public class GetOrderManagementCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        Member loginUser = (Member)req.getSession().getAttribute("loginUser");
-        if(loginUser == null || !"_20".equals(loginUser.getCdUserType())) {
-            req.setAttribute("message", "관리자만 접근 가능합니다.");
-            return "/member/login.jsp";
+        Member member = AuthUtils.checkAdmin(req, res);
+        if (member == null) {
+            req.setAttribute("message", "로그인이 필요한 서비스입니다.");
+            res.sendRedirect(req.getContextPath() + "/member/login.jsp");
+            return null;
+        }
+
+        // 관리자 타입 확인 (_20)
+        if (!"_20".equals(member.getCdUserType())) {
+            req.setAttribute("error","관리자만 접근할 수 있습니다.");
+            res.sendRedirect(req.getContextPath() + "/member/login.jsp");
+            return null;
         }
 
         try(Connection conn = Db.getConnection()){

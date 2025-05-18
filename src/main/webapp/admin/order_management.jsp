@@ -1,9 +1,24 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.order.dto.GetOrderDto" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
+  Member loginUser = AuthUtils.checkAdmin(request,response);
+  if (loginUser == null) {
+    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+
+  }
+
+  // 관리자 타입 확인 (_20)
+  if (!"_20".equals(loginUser.getCdUserType())) {
+    request.setAttribute("error","관리자만 접근할 수 있습니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+  }
+
   List<GetOrderDto> orderList = (List<GetOrderDto>) request.getAttribute("orderList");
+  String message = (String) request.getAttribute("message");
 %>
 
 <%@ include file="/common/header.jsp" %>
@@ -93,10 +108,25 @@
   form {
     margin: 0;
   }
+
+  .message-box {
+    margin-bottom: 30px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    color: #2e7d32;
+    font-size: 15px;
+    font-weight: 500;
+  }
 </style>
 
 <div class="order-container">
   <h2 class="order-title">주문 내역</h2>
+
+  <% if (message != null && !message.isEmpty()) { %>
+  <div class="message-box"><%= message %></div>
+  <% } %>
 
   <% if (orderList == null || orderList.isEmpty()) { %>
   <div class="no-orders">주문 내역이 없습니다.</div>
@@ -125,7 +155,11 @@
       <p class="order-amount">주문 금액: <%= String.format("%,d", order.getQtOrderAmount()) %>원</p>
       <p><strong>배송지:</strong> <%= order.getNmDeliveryAddress() %> <%= order.getNmDeliverySpace() %></p>
       <p><strong>수령인:</strong> <%= order.getNmReceiver() %></p>
-      <p><strong>배송 상태:</strong> <%= order.getStOrder() %></p>
+      <p><strong>배송 상태:</strong>
+        <%= "10".equals(order.getStOrder()) ? "결제완료" :
+                "20".equals(order.getStOrder()) ? "배송중" :
+                        "기타 상태 (" + order.getStOrder() + ")" %>
+      </p>
     </div>
   </div>
 

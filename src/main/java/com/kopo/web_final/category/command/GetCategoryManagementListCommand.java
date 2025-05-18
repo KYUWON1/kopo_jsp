@@ -18,6 +18,7 @@ public class GetCategoryManagementListCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("GET: GetCategoryManagementListCommand");
 
         try(Connection conn = Db.getConnection()) {
             CategoryDao dao = new CategoryDao(conn);
@@ -26,6 +27,7 @@ public class GetCategoryManagementListCommand implements Command {
             req.setAttribute("categoryList", categoryList);
         } catch (Exception e) {
             e.printStackTrace();
+            req.setAttribute("message","카테고리 로드중 에러가 발생했습니다.");
             return "/admin/category_management.jsp";
         }
 

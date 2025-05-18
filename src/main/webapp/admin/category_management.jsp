@@ -2,12 +2,19 @@
 <%@ page import="com.kopo.web_final.member.model.Member" %>
 <%@ page import="com.kopo.web_final.category.model.Category" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     // 관리자 로그인 확인
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null || !"_20".equals(loginUser.getCdUserType())) {
-        response.sendRedirect("/member/login.jsp");
-        return;
+    Member loginUser = AuthUtils.checkAdmin(request,response);
+    if (loginUser == null) {
+        request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+    }
+
+    // 관리자 타입 확인 (_20)
+    if (!"_20".equals(loginUser.getCdUserType())) {
+        request.setAttribute("error","관리자만 접근할 수 있습니다.");
+        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
     }
 
     // 처리 결과 메시지 (추가, 수정, 삭제 후 리다이렉트 시 전달됨)

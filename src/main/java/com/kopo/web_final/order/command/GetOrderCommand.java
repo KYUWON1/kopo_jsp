@@ -4,6 +4,7 @@ import com.kopo.web_final.Command;
 import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.order.dao.OrderDao;
 import com.kopo.web_final.order.dto.GetOrderDto;
+import com.kopo.web_final.utils.AuthUtils;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,11 +17,14 @@ public class GetOrderCommand implements Command {
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
-        Member loginUser = (Member) req.getSession().getAttribute("loginUser");
-        if(loginUser == null) {
-            req.setAttribute("message", "로그인 후 이용 가능합니다.");
-            return "/member/login.jsp";
+        Member loginUser = AuthUtils.checkLogin(req, res);
+        if (loginUser == null) {
+            req.setAttribute("message", "로그인이 필요한 서비스입니다.");
+            res.sendRedirect(req.getContextPath() + "/member/login.jsp");
+            return null;
         }
+
+        System.out.println("GET: GetOrderCommand, idUser : " + loginUser.getIdUser());
 
         String idUser = loginUser.getIdUser();
 

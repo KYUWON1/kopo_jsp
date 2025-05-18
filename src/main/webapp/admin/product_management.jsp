@@ -8,15 +8,12 @@
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="com.kopo.web_final.category.model.Category" %>
 <%@ page import="com.kopo.web_final.product.dto.ProductDisplayDto" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     // 업데이트 함수 수정해야함 삭제도
 
     // 관리자 로그인 확인
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null || !"_20".equals(loginUser.getCdUserType())) {
-        response.sendRedirect("/member/login.jsp");
-        return;
-    }
+    Member loginUser = AuthUtils.checkAdmin(request,response);
 
     // 처리 결과 메시지
     String message = (String)request.getAttribute("message");

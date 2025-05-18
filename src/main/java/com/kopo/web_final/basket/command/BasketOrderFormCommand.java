@@ -14,20 +14,14 @@ public class BasketOrderFormCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
-        /*
-            1. 상품 목록 불러오기
-            2. 총 결제 금액, 배송비 전달하기
-         */
+        System.out.println("POST: BasketOrderFormCommand, ID : " + req.getParameter("nbBasket"));
+
         String nbBasket = req.getParameter("nbBasket");
 
         String[] productIds = req.getParameterValues("noProduct");
-        for(String id : productIds){
-            System.out.println("상품: " + id);
-        }
+
         String[] quantity = req.getParameterValues("quantity");
-        for(String id : quantity){
-            System.out.println("수량: " + id);
-        }
+
 
         int totalPrice = 0;
         int totalDeliveryPrice = 0;

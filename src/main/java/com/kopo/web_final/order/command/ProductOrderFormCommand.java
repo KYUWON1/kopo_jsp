@@ -5,6 +5,7 @@ import com.kopo.web_final.member.model.Member;
 import com.kopo.web_final.order.dao.OrderItemDao;
 import com.kopo.web_final.order.model.Order;
 import com.kopo.web_final.type.ErrorType;
+import com.kopo.web_final.utils.AuthUtils;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,10 +17,11 @@ public class ProductOrderFormCommand implements Command {
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
 
-        Member loginUser = (Member)req.getSession().getAttribute("loginUser");
-        if(loginUser == null){
+        Member loginUser = AuthUtils.checkLogin(req, res);
+        if (loginUser == null) {
             req.setAttribute("message", "로그인이 필요한 서비스입니다.");
-            return "/member/login.jsp";
+            res.sendRedirect(req.getContextPath() + "/member/login.jsp");
+            return null;
         }
 
         String action = req.getParameter("action");
@@ -31,7 +33,8 @@ public class ProductOrderFormCommand implements Command {
         String deliveryPrice =  req.getParameter("deliveryPrice");
 
         System.out.println("POST: ProductOrderCommand");
-        System.out.println("productId: " + productId + ", quantity: " + quantity + ", buyPrice: " + buyPrice + ", sellPrice: " + sellPrice);
+        System.out.println("PRODUCTID:" + productId);
+        System.out.println("USERID:" + loginUser.getIdUser());
 
         req.setAttribute("productId", productId);
         req.setAttribute("quantity", quantity);

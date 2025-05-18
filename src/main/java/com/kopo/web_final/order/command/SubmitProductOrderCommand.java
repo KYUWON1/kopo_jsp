@@ -108,13 +108,14 @@ public class SubmitProductOrderCommand implements Command {
             }
 
             conn.commit();
+
             request.setAttribute("message", "주문이 정상적으로 완료되었습니다.");
             request.setAttribute("type", "success");
             request.setAttribute("orderId", orderId);
             request.setAttribute("orderAmount", String.valueOf(qtOrderAmount));
             request.setAttribute("deliveryFee", String.valueOf(qtOrderItemDeliveryFee));
-            return "/order/order_success.jsp";
 
+            return "/order/order_success.jsp";
         } catch (Exception e) {
             if (conn != null) conn.rollback();
             request.setAttribute("message", "주문 처리 중 오류가 발생했습니다.");

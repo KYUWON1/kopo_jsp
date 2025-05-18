@@ -22,9 +22,7 @@ public class MemberApprovalCommand implements Command {
         String idUser = req.getParameter("idUser");
         String action = req.getParameter("action"); // "approve" or "withdraw"
 
-        System.out.println("ID : " + idUser);
-        System.out.println("ACTION : " + action);
-        System.out.println("POST : doApproval");
+        System.out.println("POST : doApproval" + "ID : " + idUser + "ACTION : " + action);
 
         String pageStatus = "apply"; // 기본값
 

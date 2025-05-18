@@ -3,6 +3,7 @@ package com.kopo.web_final.member.command;
 import com.kopo.web_final.Command;
 import com.kopo.web_final.member.dao.MemberDao;
 import com.kopo.web_final.member.model.Member;
+import com.kopo.web_final.utils.AuthUtils;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,11 +18,11 @@ public class MemberPasswordUpdateCommand implements Command {
         req.setCharacterEncoding("UTF-8");
         System.out.println("POST: change-password");
         // 로그인 사용자 확인
-        HttpSession session = req.getSession();
-        Member loginUser = (Member) session.getAttribute("loginUser");
-
+        Member loginUser = AuthUtils.checkLogin(req,res);
         if (loginUser == null) {
-            return "/member/login.jsp";
+            req.setAttribute("message", "로그인이 필요한 서비스입니다.");
+            res.sendRedirect(req.getContextPath() + "/member/login.jsp");
+            return null;
         }
 
         String idUser = req.getParameter("idUser");
@@ -69,7 +70,7 @@ public class MemberPasswordUpdateCommand implements Command {
                 // 세션의 유저 정보도 업데이트
                 loginUser.setNmPaswd(newPassword);
                 loginUser.setNmEncPaswd(newPassword);
-                session.setAttribute("loginUser", loginUser);
+                req.getSession().setAttribute("loginUser", loginUser);
 
                 req.setAttribute("message","비밀번호가 성공적으로 변경되었습니다.");
                 req.setAttribute("type", "success");

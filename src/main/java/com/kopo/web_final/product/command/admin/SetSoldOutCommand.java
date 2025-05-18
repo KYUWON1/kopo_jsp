@@ -14,7 +14,10 @@ public class SetSoldOutCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        req.setCharacterEncoding("UTF-8");
+        System.out.println("UPDATE : SetSoldOutCommand : " + req.getParameter("noProduct"));
         String noProduct = req.getParameter("noProduct");
+
 
         try (Connection conn = Db.getConnection()) {
             ProductDao dao = new ProductDao(conn);

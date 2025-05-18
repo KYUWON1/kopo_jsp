@@ -1,8 +1,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.order.dto.GetOrderItemDto" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
+  Member loginUser = AuthUtils.checkAdmin(request,response);
+  if (loginUser == null) {
+    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+
+  }
+
+  // 관리자 타입 확인 (_20)
+  if (!"_20".equals(loginUser.getCdUserType())) {
+    request.setAttribute("error","관리자만 접근할 수 있습니다.");
+    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
+  }
+
   String idOrder = (String) request.getAttribute("idOrder");
   String totalPrice = (String) request.getAttribute("totalPrice");
   String nmReceiver = (String) request.getAttribute("nmReceiver");
@@ -10,6 +24,7 @@
   String daOrder = (String) request.getAttribute("daOrder");
 
   List<GetOrderItemDto> orderItemList = (List<GetOrderItemDto>) request.getAttribute("orderItemList");
+  String message = (String) request.getAttribute("message");
 %>
 
 <%@ include file="/common/header.jsp" %>
@@ -104,10 +119,25 @@
   .btn-back:hover {
     background-color: #757575;
   }
+
+  .message-box {
+    margin-bottom: 30px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    color: #2e7d32;
+    font-size: 15px;
+    font-weight: 500;
+  }
 </style>
 
 
 <div class="order-detail-container">
+  <% if (message != null && !message.isEmpty()) { %>
+  <div class="message-box"><%= message %></div>
+  <% } %>
+
   <button onclick="history.back()" class="btn-back">뒤로가기</button>
 
   <h2 class="title">주문 상세 정보</h2>

@@ -17,6 +17,8 @@ public class SortProductListCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("GET: SortProductListCommand");
+
         String keyword = req.getParameter("keyword");
         String sort = req.getParameter("sort");
         String categoryId = req.getParameter("categoryId");

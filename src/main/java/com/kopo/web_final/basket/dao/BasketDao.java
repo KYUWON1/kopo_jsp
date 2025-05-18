@@ -77,7 +77,6 @@ public class BasketDao {
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
                 int nbBasket = rs.getInt(1);
-                System.out.println(nbBasket);
 
                 return nbBasket;
             }

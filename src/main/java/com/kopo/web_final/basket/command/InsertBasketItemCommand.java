@@ -5,6 +5,7 @@ import com.kopo.web_final.basket.dao.BasketDao;
 import com.kopo.web_final.basket.dao.BasketItemDao;
 import com.kopo.web_final.basket.model.BasketItem;
 import com.kopo.web_final.member.model.Member;
+import com.kopo.web_final.utils.AuthUtils;
 import com.kopo.web_final.utils.Db;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,11 +16,15 @@ import java.time.LocalDate;
 public class InsertBasketItemCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        Member loginUser = (Member)req.getSession().getAttribute("loginUser");
+        req.setCharacterEncoding("UTF-8");
+        Member loginUser = AuthUtils.checkLogin(req,res);
+        // 로그인 체크
         if(loginUser == null){
             req.setAttribute("message", "로그인이 필요한 서비스입니다.");
-            return "/member/login.jsp";
+            res.sendRedirect(req.getContextPath() + "/member/login.jsp");
         }
+
+        System.out.println("POST : InsertBasketItemCommand");
 
         // 상품 정보 가져오기
         String productId = (String)req.getAttribute("productId");

@@ -6,8 +6,14 @@
 %>
 <%
     if(message != null){
+        message = message.replace("'", "\\'")
+                .replace("\"", "\\\"")
+                .replace("\r", "")
+                .replace("\n", "\\n");
 %>
-    <script>alert("로그인이 필요한서비스입니다.")</script>
+<script>
+    alert('<%= message %>');
+</script>
 <%
     }
 %>

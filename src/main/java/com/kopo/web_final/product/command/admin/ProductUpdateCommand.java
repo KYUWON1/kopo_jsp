@@ -20,8 +20,7 @@ public class ProductUpdateCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
-
-        System.out.println(req.getPart("productImage"));
+        System.out.println("UPDATE: ProductUpdateCommand , productId : " + req.getParameter("noProduct"));
         String fileId = req.getParameter("idFile");
 
         String productId = req.getParameter("noProduct");

@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.time.LocalDate;
 
-@WebServlet(name = "CategoryInsertController", value = "/admin/category-insert")
 public class CateGoryInsertCommand implements Command {
     public CateGoryInsertCommand() {
         super();
@@ -20,6 +19,7 @@ public class CateGoryInsertCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("POST : CateGoryInsertCommand");
 
         Category category = new Category();
 
@@ -39,7 +39,6 @@ public class CateGoryInsertCommand implements Command {
 
         // ynUse 값을 ynUser 대신 정확하게 처리
         String ynUse = req.getParameter("ynUse");
-        System.out.println(ynUse);
         category.setYnUse(ynUse); // "Y" 또는 "N"
 
         category.setNoRegister(req.getParameter("noRegister"));

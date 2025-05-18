@@ -1,4 +1,5 @@
-<%@ page import="com.kopo.web_final.member.model.Member" %><%--
+<%@ page import="com.kopo.web_final.member.model.Member" %>
+<%@ page import="com.kopo.web_final.utils.AuthUtils" %><%--
   Created by IntelliJ IDEA.
   User: user
   Date: 25. 4. 30.
@@ -7,7 +8,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-  Member loginMember = (Member) session.getAttribute("loginUser");
+  Member loginMember = AuthUtils.checkLogin(request,response);
   String name = "사용자";
   if(loginMember != null){
     name = loginMember.getNmUser();

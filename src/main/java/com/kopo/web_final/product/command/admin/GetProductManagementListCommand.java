@@ -17,6 +17,7 @@ public class GetProductManagementListCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println( "GET: GetProductManagementListCommand");
 
         try(Connection conn = Db.getConnection()) {
             ProductDao productDao = new ProductDao(conn);

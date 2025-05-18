@@ -246,9 +246,6 @@
 <%
   List<Category> categoryList = (List<Category>)request.getAttribute("categoryList");
   List<ProductDisplayDto> productListWithCategory = (List<ProductDisplayDto>)request.getAttribute("productListWithCategory");
-
-  Member loginUser = (Member) session.getAttribute("loginUser");
-
 %>
 
 <!-- 콘텐츠 영역 -->
@@ -257,8 +254,6 @@
     <h1>심플리원 쇼핑몰에 오신 것을 환영합니다</h1>
     <p>Simple is One, 심규원이 만든 심플하고 특별한 쇼핑몰</p>
   </div>
-
-
 
   <div class="main-content">
     <!-- 상품 검색 및 정렬 -->
@@ -327,8 +322,8 @@
         <div class="product-card">
           <a href="productDetail.do?productId=<%= p.getNoProduct() %>" style="text-decoration: none; color: inherit; display: block;">
             <div class="product-img">
-              <!-- 상품 이미지  getImage.do?id=<%= p.getIdFile() %> -->
-              <img src="" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
+              <!-- 상품 이미지   -->
+              <img src="getImage.do?id=<%= p.getIdFile() %>" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
             </div>
             <div class="product-info">
               <div class="product-title"><%= p.getNmProduct() %></div>

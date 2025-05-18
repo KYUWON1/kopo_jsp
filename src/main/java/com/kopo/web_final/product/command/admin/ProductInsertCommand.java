@@ -24,13 +24,14 @@ public class ProductInsertCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        System.out.println("POST: ProductInsertCommand");
+
         req.getParts();
         // 상품 생성
         Product product = new Product();
         product.setNmProduct(req.getParameter("nmProduct"));
         product.setNmDetailExplain(req.getParameter("nmDetailExplain"));
         product.setIdFile("none");
-        System.out.println(req.getParameter("dtStartDate"));
         product.setDtStartDate(req.getParameter("dtStartDate").replace("-", ""));
         product.setDtEndDate(req.getParameter("dtEndDate").replace("-", ""));
         product.setQtCustomer(Integer.parseInt(req.getParameter("qtCustomer")));
