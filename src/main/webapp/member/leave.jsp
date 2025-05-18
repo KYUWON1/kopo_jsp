@@ -3,11 +3,8 @@
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     String error = (String)request.getAttribute("error");
-    Member loginUser = AuthUtils.checkLogin(request,response);
-    if (loginUser == null) {
-        request.setAttribute("message", "로그인이 필요한 서비스입니다.");
-        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
-    }
+    Member loginUser = (Member) request.getSession().getAttribute("loginUser");
+
 %>
 <style>
     body {

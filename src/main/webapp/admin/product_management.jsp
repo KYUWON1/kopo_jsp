@@ -1,19 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.kopo.web_final.member.model.Member" %>
-<%@ page import="com.kopo.web_final.product.model.Product" %>
+<%@ page import="com.kopo.web_final.domain.member.model.Member" %>
+<%@ page import="com.kopo.web_final.domain.product.model.Product" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.time.LocalDate" %>
-<%@ page import="com.kopo.web_final.category.model.Category" %>
-<%@ page import="com.kopo.web_final.product.dto.ProductDisplayDto" %>
+<%@ page import="com.kopo.web_final.domain.category.model.Category" %>
+<%@ page import="com.kopo.web_final.domain.product.dto.ProductDisplayDto" %>
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     // 업데이트 함수 수정해야함 삭제도
 
     // 관리자 로그인 확인
-    Member loginUser = AuthUtils.checkAdmin(request,response);
+    Member loginUser = (Member) request.getSession().getAttribute("loginUser");
 
     // 처리 결과 메시지
     String message = (String)request.getAttribute("message");

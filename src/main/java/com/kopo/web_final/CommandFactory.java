@@ -1,13 +1,13 @@
 package com.kopo.web_final;
 
-import com.kopo.web_final.basket.command.*;
-import com.kopo.web_final.category.command.*;
-import com.kopo.web_final.member.command.*;
-import com.kopo.web_final.order.command.*;
-import com.kopo.web_final.order.command.admin.GetOrderDetailManagementCommand;
-import com.kopo.web_final.order.command.admin.GetOrderManagementCommand;
-import com.kopo.web_final.product.command.admin.*;
-import com.kopo.web_final.product.command.member.*;
+import com.kopo.web_final.domain.basket.command.*;
+import com.kopo.web_final.domain.category.command.*;
+import com.kopo.web_final.domain.member.command.*;
+import com.kopo.web_final.domain.order.command.*;
+import com.kopo.web_final.domain.order.command.admin.GetOrderDetailManagementCommand;
+import com.kopo.web_final.domain.order.command.admin.GetOrderManagementCommand;
+import com.kopo.web_final.domain.product.command.admin.*;
+import com.kopo.web_final.domain.product.command.member.*;
 
 public class CommandFactory {
     public static Command getCommand(String action) {
@@ -34,11 +34,11 @@ public class CommandFactory {
             case "memberInfoAuth" -> new MemberInfoAuthCommand();
             case "memberInfoUpdate" -> new MemberInfoUpdateCommand();
             case "memberPasswordUpdate" -> new MemberPasswordUpdateCommand();
+            case "login" -> new LoginCommand();
+            // 관리자 메뉴
             case "memberManagement" -> new MemberManagementCommand();
             case "memberApproval" -> new MemberApprovalCommand();
             case "memberStatusUpdate" -> new MemberStatusUpdateCommand();
-            case "login" -> new LoginCommand();
-            // 관리자 메뉴
             case "categoryInsert" -> new CateGoryInsertCommand();
             case "categoryUpdate" -> new CategoryUpdateCommand();
             case "categoryDelete" -> new CategoryDeleteCommand();

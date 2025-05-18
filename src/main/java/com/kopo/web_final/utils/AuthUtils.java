@@ -1,6 +1,6 @@
 package com.kopo.web_final.utils;
 
-import com.kopo.web_final.member.model.Member;
+import com.kopo.web_final.domain.member.model.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

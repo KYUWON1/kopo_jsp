@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.kopo.web_final.order.dto.GetOrderItemDto" %>
+<%@ page import="com.kopo.web_final.domain.order.dto.GetOrderItemDto" %>
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
-  Member loginUser = AuthUtils.checkLogin(request,response);
+  Member loginUser = (Member) request.getSession().getAttribute("loginUser");
+
   String message = (String) request.getAttribute("message");
   String orderId = (String) request.getAttribute("orderId");
   String nmUser = (String) request.getAttribute("nmUser");

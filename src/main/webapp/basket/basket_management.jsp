@@ -1,15 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.kopo.web_final.basket.dto.BasketDto" %>
-<%@ page import="com.kopo.web_final.basket.dto.BasketItemDto" %>
+<%@ page import="com.kopo.web_final.domain.basket.dto.BasketDto" %>
+<%@ page import="com.kopo.web_final.domain.basket.dto.BasketItemDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
-  Member loginUser = AuthUtils.checkLogin(request,response);
-  if (loginUser == null) {
-    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
-    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
-  }
+  Member loginUser = (Member) request.getSession().getAttribute("loginUser");
+
   BasketDto basket = (BasketDto) request.getAttribute("basketTable");
   List<BasketItemDto> basketItems = (List<BasketItemDto>) request.getAttribute("basketList");
 %>

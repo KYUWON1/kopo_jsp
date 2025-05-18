@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.kopo.web_final.product.model.Product" %>
+<%@ page import="com.kopo.web_final.domain.product.model.Product" %>
 
 <style>
     .detail-wrapper {

@@ -1,21 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.kopo.web_final.order.dto.GetOrderDto" %>
+<%@ page import="com.kopo.web_final.domain.order.dto.GetOrderDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
-  Member loginUser = AuthUtils.checkAdmin(request,response);
-  if (loginUser == null) {
-    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
-    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
-
-  }
-
-  // 관리자 타입 확인 (_20)
-  if (!"_20".equals(loginUser.getCdUserType())) {
-    request.setAttribute("error","관리자만 접근할 수 있습니다.");
-    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
-  }
+  Member loginUser = (Member) request.getSession().getAttribute("loginUser");
 
   List<GetOrderDto> orderList = (List<GetOrderDto>) request.getAttribute("orderList");
   String message = (String) request.getAttribute("message");

@@ -1,13 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.kopo.web_final.member.model.Member" %>
+<%@ page import="com.kopo.web_final.domain.member.model.Member" %>
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 <%
     // 로그인 체크
-    Member loginUser = AuthUtils.checkLogin(request,response);
-    if(loginUser == null){
-        request.setAttribute("message", "로그인이 필요한 서비스입니다.");
-        response.sendRedirect(request.getContextPath() + "/member/login.jsp");
-    }
+    Member loginUser = (Member) request.getSession().getAttribute("loginUser");
 
     // 공통 메시지 처리
     String message = (String) request.getAttribute("message");

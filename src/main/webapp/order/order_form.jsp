@@ -1,13 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.kopo.web_final.member.model.Member" %>
+<%@ page import="com.kopo.web_final.domain.member.model.Member" %>
 <%@ page import="com.kopo.web_final.utils.AuthUtils" %>
 
 <%
-  Member loginUser = AuthUtils.checkLogin(request,response);
-  if (loginUser == null) {
-    request.setAttribute("message", "로그인이 필요한 서비스입니다.");
-    response.sendRedirect(request.getContextPath() + "/member/login.jsp");
-  }
+  Member loginUser = (Member) request.getSession().getAttribute("loginUser");
+
   String quantityStr = (String) request.getAttribute("quantity");
   String buyPriceStr = (String) request.getAttribute("buyPrice");
   String sellPriceStr = (String) request.getAttribute("sellPrice");

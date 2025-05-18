@@ -1,7 +1,7 @@
-<%@ page import="com.kopo.web_final.category.model.Category" %>
+<%@ page import="com.kopo.web_final.domain.category.model.Category" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.kopo.web_final.product.dto.ProductDisplayDto" %>
-<%@ page import="com.kopo.web_final.product.model.Product" %>
+<%@ page import="com.kopo.web_final.domain.product.dto.ProductDisplayDto" %>
+<%@ page import="com.kopo.web_final.domain.product.model.Product" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <style>
   /* 콘텐츠 영역 */
@@ -319,10 +319,29 @@
         <% for (ProductDisplayDto dto : productListWithCategory) {
           Product p = dto.getProduct();
         %>
-        <div class="product-card">
+        <div class="product-card" style="<%= p.getQtStock() == 0 ? "pointer-events: none; opacity: 0.5;" : "" %>">
+          <% if (p.getQtStock() == 0) { %>
+          <!-- 클릭 안 되게 비활성화된 div -->
+          <div class="product-img">
+            <img src="getImage.do?id=<%= p.getIdFile() %>" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
+          </div>
+          <div class="product-info">
+            <div class="product-title"><%= p.getNmProduct() %></div>
+            <div style="color: #d32f2f; font-weight: bold; margin-bottom: 6px;">[품절]</div>
+            <div class="product-original-price">
+              <%= String.format("%,d원", p.getQtSalePrice()) %>
+            </div>
+            <div class="product-discount-price">
+              <%= String.format("%,d원", p.getQtCustomer()) %>
+            </div>
+            <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">
+              카테고리: <%= dto.getCategoryName() %>
+            </div>
+          </div>
+          <% } else { %>
+          <!-- 일반 상품 카드 (클릭 가능) -->
           <a href="productDetail.do?productId=<%= p.getNoProduct() %>" style="text-decoration: none; color: inherit; display: block;">
             <div class="product-img">
-              <!-- 상품 이미지   -->
               <img src="getImage.do?id=<%= p.getIdFile() %>" alt="상품 이미지" style="max-width: 100%; max-height: 100%;">
             </div>
             <div class="product-info">
@@ -333,9 +352,12 @@
               <div class="product-discount-price">
                 <%= String.format("%,d원", p.getQtCustomer()) %>
               </div>
-              <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">카테고리: <%= dto.getCategoryName() %></div>
+              <div class="product-category" style="font-size: 13px; color: #999; margin-top: 4px;">
+                카테고리: <%= dto.getCategoryName() %>
+              </div>
             </div>
           </a>
+          <% } %>
         </div>
         <% } %>
       </div>
