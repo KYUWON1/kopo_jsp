@@ -6,10 +6,7 @@ import com.kopo.web_final.member.command.*;
 import com.kopo.web_final.order.command.*;
 import com.kopo.web_final.order.command.admin.GetOrderDetailManagementCommand;
 import com.kopo.web_final.order.command.admin.GetOrderManagementCommand;
-import com.kopo.web_final.product.command.admin.GetProductManagementListCommand;
-import com.kopo.web_final.product.command.admin.ProductDeleteCommand;
-import com.kopo.web_final.product.command.admin.ProductInsertCommand;
-import com.kopo.web_final.product.command.admin.ProductUpdateCommand;
+import com.kopo.web_final.product.command.admin.*;
 import com.kopo.web_final.product.command.member.*;
 
 public class CommandFactory {
@@ -52,7 +49,7 @@ public class CommandFactory {
             case "productUpdate" -> new ProductUpdateCommand();
             case "productDelete" -> new ProductDeleteCommand();
             case "orderManagement" -> new GetOrderManagementCommand();
-
+            case "productSoldOut" -> new SetSoldOutCommand();
             case "orderDetailManagement" -> new GetOrderDetailManagementCommand();
 
             default -> null;

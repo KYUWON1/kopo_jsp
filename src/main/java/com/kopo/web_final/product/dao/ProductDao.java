@@ -355,6 +355,17 @@ public class ProductDao {
         }
     }
 
+    public int setSoldOut(String noProduct) throws SQLException {
+        String sql = "UPDATE tb_product SET QT_STOCK = 0 WHERE NO_PRODUCT = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, noProduct);
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace(); // 로깅만 하고
+            throw e; // 예외 그대로 던짐
+        }
+    }
+
     public int decreaseStock(String productId, int quantity) throws SQLException {
         String sql = "UPDATE tb_product SET qt_stock = qt_stock - ? WHERE no_product = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -372,5 +383,6 @@ public class ProductDao {
     private Date toSqlDate(LocalDate localDate) {
         return localDate != null ? java.sql.Date.valueOf(localDate) : null;
     }
+
 
 }

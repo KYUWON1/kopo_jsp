@@ -136,25 +136,7 @@
       </div>
     </div>
   </a>
-  <!-- 관리자용 상세 정보 출력 -->
-  <div style="padding: 20px; background-color: #f9fbe7; border: 1px solid #cddc39; border-radius: 8px; margin-bottom: 30px;">
-    <h4 style="margin-bottom: 10px; color: #827717;">[관리자용] DTO 전체 정보</h4>
-    <ul style="font-size: 14px; color: #444; line-height: 1.6;">
-      <li><strong>idOrderItem:</strong> <%= item.getIdOrderItem() %></li>
-      <li><strong>idOrder:</strong> <%= item.getIdOrder() %></li>
-      <li><strong>cnOrderItem:</strong> <%= item.getCnOrderItem() %></li>
-      <li><strong>noProduct:</strong> <%= item.getNoProduct() %></li>
-      <li><strong>qtUnitPrice:</strong> <%= item.getQtUnitPrice() %></li>
-      <li><strong>qtOrderItem:</strong> <%= item.getQtOrderItem() %></li>
-      <li><strong>qtOrderItemAmount:</strong> <%= item.getQtOrderItemAmount() %></li>
-      <li><strong>qtOrderItemDelivery:</strong> <%= item.getQtOrderItemDelivery() %></li>
-      <li><strong>nmProduct:</strong> <%= item.getNmProduct() %></li>
-      <li><strong>idFile:</strong> <%= item.getIdFile() %></li>
-      <li><strong>stPayment:</strong> <%= item.getStPayment() %></li>
-      <li><strong>noRegister:</strong> <%= item.getNoRegister() %></li>
-      <li><strong>daFirstDate:</strong> <%= item.getDaFirstDate() %></li>
-    </ul>
-  </div>
+
   <%  }
   } else { %>
   <p style="text-align: center; color: gray;">주문된 상품이 없습니다.</p>

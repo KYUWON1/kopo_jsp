@@ -40,24 +40,31 @@ public class ProductUpdateCommand implements Command {
 
         // 컨텐츠 테이블 생성
         Part filePart = req.getPart("productImage");
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String submittedFileName = filePart.getSubmittedFileName();
 
         try (Connection conn = Db.getConnection()) {
             conn.setAutoCommit(false);
 
             // 컨텐츠 생성
-            ContentDao contentDao = new ContentDao(conn);
-            Content content = new Content();
-            content.setBoSaveFile(new javax.sql.rowset.serial.SerialBlob(filePart.getInputStream().readAllBytes()));
-            content.setNmOrgFile(fileName);
-            content.setDaSave(LocalDate.now());
-            int contentResult = contentDao.updateContent(fileId,content);
-            if (contentResult < 1) {
-                conn.rollback();
-                req.setAttribute("message", "컨텐츠 수정에 실패했습니다.");
-                req.setAttribute("type", "error");
-                return "productManagement.do";
+            if (submittedFileName != null && !submittedFileName.isEmpty()) {
+                // 새 파일이 있는 경우에만 콘텐츠 업데이트 수행
+                String fileName = Paths.get(submittedFileName).getFileName().toString();
+
+                ContentDao contentDao = new ContentDao(conn);
+                Content content = new Content();
+                content.setBoSaveFile(new javax.sql.rowset.serial.SerialBlob(filePart.getInputStream().readAllBytes()));
+                content.setNmOrgFile(fileName);
+                content.setDaSave(LocalDate.now());
+
+                    int contentResult = contentDao.updateContent(fileId, content);
+                if (contentResult < 1) {
+                    conn.rollback();
+                    req.setAttribute("message", "컨텐츠 수정에 실패했습니다.");
+                    req.setAttribute("type", "error");
+                    return "productManagement.do";
+                }
             }
+
 
             ProductDao dao = new ProductDao(conn);
             int result1 = dao.updateProduct(productId, product);

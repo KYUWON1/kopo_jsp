@@ -451,6 +451,7 @@
 
         // 값 세팅
         document.getElementById('noProduct').value = noProduct;
+        document.getElementById('noProduct').value = noProduct;
         document.getElementById('nmProduct').value = nmProduct;
         document.getElementById('nmDetailExplain').value = nmDetailExplain;
         document.getElementById('dtStartDate').value = dtStartDate;
@@ -505,6 +506,14 @@
         document.getElementById('deleteConfirmModal').style.display = 'none';
         deleteProductId = null;
         deleteCategoryId = null;
+    }
+
+    function markAsSoldOut(noProduct, categoryId) {
+        if (confirm("해당 상품을 품절 처리하시겠습니까?")) {
+            document.getElementById('soldOutProductId').value = noProduct;
+            document.getElementById('soldOutCategoryId').value = categoryId;
+            document.getElementById('soldOutForm').submit();
+        }
     }
 
     function submitDelete() {
@@ -622,7 +631,10 @@
                             <% } %>
                         </td>
                         <td class="actions">
-
+                            <button class="btn btn-status"
+                                    onclick="markAsSoldOut('<%= product.getNoProduct() %>', '<%= productDto.getCategoryId() %>')">
+                                품절처리
+                            </button>
                             <button class="btn btn-edit" onclick="openEditModal(
                                     '<%= product.getNoProduct() %>',
                                     '<%= product.getNmProduct() %>',
@@ -772,6 +784,12 @@
 <form id="deleteForm" method="post" action="productDelete.do" style="display:none;">
     <input type="hidden" id="deleteId" name="noProduct">
     <input type="hidden" id="deleteCategoryId" name="nmCategory">
+</form>
+
+<!-- 품절 처리 폼 -->
+<form id="soldOutForm" method="post" action="productSoldOut.do" style="display:none;">
+    <input type="hidden" id="soldOutProductId" name="noProduct">
+    <input type="hidden" id="soldOutCategoryId" name="nmCategory">
 </form>
 
 <%@ include file="/common/simple_footer.jsp" %>

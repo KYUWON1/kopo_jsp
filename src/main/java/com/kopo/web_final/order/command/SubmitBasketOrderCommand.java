@@ -6,6 +6,7 @@ import com.kopo.web_final.basket.dao.BasketItemDao;
 import com.kopo.web_final.basket.dto.BasketDto;
 import com.kopo.web_final.order.dao.OrderDao;
 import com.kopo.web_final.order.dao.OrderItemDao;
+import com.kopo.web_final.order.dto.GetOrderItemDto;
 import com.kopo.web_final.order.model.Order;
 import com.kopo.web_final.order.model.OrderItem;
 import com.kopo.web_final.product.dao.ProductDao;
@@ -129,6 +130,13 @@ public class SubmitBasketOrderCommand implements Command {
             // 모든 트랜잭션 처리 완료
             conn.commit();
             req.setAttribute("message", "장바구니 상품 주문이 완료되었습니다.");
+            req.setAttribute("orderId",orderId);
+            List<GetOrderItemDto> orderItemListDetail = orderItemDao.getOrderItemListDetail(orderId);
+            req.setAttribute("nmUser", nmUser);
+            req.setAttribute("totalPrice", totalPrice);
+            req.setAttribute("deliveryFee", deliveryFee);
+            req.setAttribute("totalPrice", totalPrice + deliveryFee);
+            req.setAttribute("orderItemList", orderItemListDetail);
         } catch (Exception e) {
             if (conn != null) {
                 try {
@@ -151,6 +159,6 @@ public class SubmitBasketOrderCommand implements Command {
             }
         }
 
-        return "getBasket.do";
+        return "/order/basket_order_success.jsp";
     }
 }

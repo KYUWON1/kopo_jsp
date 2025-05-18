@@ -1,8 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.kopo.web_final.product.model.Product" %>
-<%@ page import="com.kopo.web_final.product.dao.ProductDao" %>
-<%@ page import="com.kopo.web_final.utils.Db" %>
-<%@ page import="java.sql.Connection" %>
 
 <style>
     .detail-wrapper {
