@@ -1,25 +1,25 @@
 package com.kopo.web_final.utils;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql .SQLException;
 
 public class Db {
-    private static DataSource ds;
+    private static final String DRIVER = "oracle.jdbc.OracleDriver";
+    private static final String URL = "jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C:/dev/web_final/Wallet_DinkDB";
+    private static final String USER = "DA2507";
+    private static final String PASSWORD = "Data2507";
 
     static {
         try {
-            Context initContext = new InitialContext();
-            Context envContext = (Context) initContext.lookup("java:/comp/env");
-            ds = (DataSource) envContext.lookup("jdbc/OracleDB");
-        } catch (Exception e) {
+            Class.forName(DRIVER);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Oracle JDBC 드라이버를 로드할 수 없습니다.");
             e.printStackTrace();
         }
     }
 
-    public static Connection getConnection() throws Exception {
-        return ds.getConnection();
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
-
 }
